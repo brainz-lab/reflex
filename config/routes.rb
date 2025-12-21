@@ -50,5 +50,5 @@ Rails.application.routes.draw do
   # WebSocket
   mount ActionCable.server => '/cable'
 
-  root 'dashboard/errors#index'
+  root 'dashboard/projects#index'
 end
