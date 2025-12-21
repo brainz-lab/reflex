@@ -1,19 +1,23 @@
 module Dashboard
   class ProjectsController < BaseController
-    skip_before_action :set_project, only: [:index]
-    before_action :set_project, only: [:show, :setup, :mcp_setup, :analytics]
+    skip_before_action :set_project, only: [:index, :new, :create]
+    skip_before_action :authenticate!, only: [:index, :new, :create], if: -> { Rails.env.development? }
+    before_action :set_project, only: [:show, :setup, :mcp_setup, :analytics, :edit, :update]
 
     def index
-      # Redirect to the project associated with the API key
-      if @api_key_info && @api_key_info[:project_id]
+      if Rails.env.development?
+        # In dev, show all projects
+        @projects = Project.order(created_at: :desc)
+      elsif @api_key_info && @api_key_info[:project_id]
+        # In production, show only the project for this API key
         project = Project.find_or_create_for_platform!(
           platform_project_id: @api_key_info[:project_id],
           name: @api_key_info[:project_name],
           environment: @api_key_info[:environment] || 'live'
         )
-        redirect_to dashboard_project_errors_path(project)
+        @projects = [project]
       else
-        render 'dashboard/auth_required', status: :unauthorized
+        redirect_to new_dashboard_project_path
       end
     end
 
@@ -21,10 +25,76 @@ module Dashboard
       redirect_to dashboard_project_errors_path(@project)
     end
 
+    def new
+      @project = Project.new
+    end
+
+    def create
+      if Rails.env.development?
+        # In dev, create project directly
+        @project = Project.new(
+          name: params[:project]&.[](:name) || params[:name],
+          environment: params[:project]&.[](:environment) || 'development',
+          platform_project_id: SecureRandom.uuid
+        )
+
+        if @project.name.blank?
+          flash.now[:alert] = 'Please enter a project name'
+          return render :new, status: :unprocessable_entity
+        end
+
+        if @project.save
+          # Set a dev API key in session
+          session[:api_key] = "dev_#{@project.id}"
+          redirect_to dashboard_project_errors_path(@project), notice: "Created #{@project.name}"
+        else
+          flash.now[:alert] = @project.errors.full_messages.join(', ')
+          render :new, status: :unprocessable_entity
+        end
+      else
+        # In production, require API key from Platform
+        api_key = params[:api_key]&.strip
+
+        if api_key.blank?
+          flash.now[:alert] = 'Please enter an API key'
+          @project = Project.new
+          return render :new, status: :unprocessable_entity
+        end
+
+        key_info = PlatformClient.validate_key(api_key)
+
+        unless key_info[:valid]
+          flash.now[:alert] = 'Invalid API key. Please check and try again.'
+          @project = Project.new
+          return render :new, status: :unprocessable_entity
+        end
+
+        project = Project.find_or_create_for_platform!(
+          platform_project_id: key_info[:project_id],
+          name: key_info[:project_name],
+          environment: key_info[:environment] || 'live'
+        )
+
+        session[:api_key] = api_key
+        redirect_to dashboard_project_errors_path(project), notice: "Connected to #{project.name}"
+      end
+    end
+
     def setup
     end
 
     def mcp_setup
+    end
+
+    def edit
+    end
+
+    def update
+      if @project.update(project_params)
+        redirect_to edit_dashboard_project_path(@project), notice: 'Settings saved successfully'
+      else
+        render :edit, status: :unprocessable_entity
+      end
     end
 
     def analytics
@@ -135,6 +205,10 @@ module Dashboard
     end
 
     private
+
+    def project_params
+      params.require(:project).permit(:name, :environment, settings: {})
+    end
 
     def period_start_date(period)
       case period

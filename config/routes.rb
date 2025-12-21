@@ -26,11 +26,12 @@ Rails.application.routes.draw do
 
   # Dashboard
   namespace :dashboard do
-    resources :projects, only: [:index, :show] do
+    resources :projects, only: [:index, :show, :new, :create, :edit, :update] do
       member do
         get :setup
         get :mcp_setup
         get :analytics
+        get :settings, to: 'projects#edit'
       end
       resources :errors, only: [:index, :show] do
         member do

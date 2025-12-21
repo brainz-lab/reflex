@@ -1,0 +1,81 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Projects</h1>
+      <p class="text-[14px] mt-1" style="color: #8B8780;">Select a project to view errors</p>
+    </div>
+    <%= link_to new_dashboard_project_path,
+        class: "px-4 py-2 text-[14px] font-medium rounded-lg transition-colors hover:opacity-90",
+        style: "background: #1A1A1A; color: #FFFFFE;" do %>
+      + New Project
+    <% end %>
+  </div>
+
+  <!-- Projects Grid -->
+  <% if @projects.any? %>
+    <div class="grid gap-4">
+      <% @projects.each do |project| %>
+        <%= link_to dashboard_project_errors_path(project),
+            class: "block rounded-xl p-5 transition-all hover:shadow-md",
+            style: "background: #FFFFFE; border: 1px solid #E8E5E0;" do %>
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #FEEBE7;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#E54D2E"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-[15px] font-semibold" style="color: #1A1A1A;"><%= project.name %></h3>
+                <p class="text-[13px] mt-0.5" style="color: #8B8780;">
+                  <%= project.environment || 'development' %>
+                </p>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <% unresolved_count = project.error_groups.unresolved.count %>
+              <% if unresolved_count > 0 %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium"
+                      style="background: #FEEBE7; color: #CD2B31;">
+                  <%= unresolved_count %> unresolved
+                </span>
+              <% else %>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium"
+                      style="background: #DDF3E4; color: #18794E;">
+                  All clear
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 mt-4 text-[13px]" style="color: #8B8780;">
+            <span><%= project.error_groups.count %> errors</span>
+            <span>&middot;</span>
+            <span><%= project.error_events.count %> events</span>
+            <% if project.error_events.exists? %>
+              <span>&middot;</span>
+              <span>Last event <%= time_ago_in_words(project.error_events.maximum(:occurred_at)) %> ago</span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="rounded-xl px-6 py-16 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4" style="background: #F0EFED;">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#C4C0B8"/>
+        </svg>
+      </div>
+      <p class="text-[15px] font-medium" style="color: #1A1A1A;">No projects yet</p>
+      <p class="text-[14px] mt-1" style="color: #8B8780;">Create your first project to start tracking errors</p>
+      <%= link_to new_dashboard_project_path,
+          class: "inline-block mt-4 px-4 py-2 text-[14px] font-medium rounded-lg transition-colors hover:opacity-90",
+          style: "background: #1A1A1A; color: #FFFFFE;" do %>
+        Create Project
+      <% end %>
+    </div>
+  <% end %>
+</div>

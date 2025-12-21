@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2024_12_21_000003) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_21_172112) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -89,6 +89,7 @@ ActiveRecord::Schema[8.1].define(version: 2024_12_21_000003) do
     t.bigint "event_count", default: 0
     t.string "name"
     t.string "platform_project_id", null: false
+    t.jsonb "settings", default: {}
     t.datetime "updated_at", null: false
     t.index ["platform_project_id"], name: "index_projects_on_platform_project_id", unique: true
   end
