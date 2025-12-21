@@ -26,15 +26,22 @@ Rails.application.routes.draw do
 
   # Dashboard
   namespace :dashboard do
-    root to: 'errors#index'
-    resources :errors, only: [:index, :show] do
+    resources :projects, only: [:index, :show] do
       member do
-        post :resolve
-        post :ignore
-        post :unresolve
+        get :setup
+        get :mcp_setup
+        get :analytics
       end
-      resources :events, only: [:index, :show]
+      resources :errors, only: [:index, :show] do
+        member do
+          post :resolve
+          post :ignore
+          post :unresolve
+        end
+        resources :events, only: [:index, :show]
+      end
     end
+    root to: 'projects#index'
   end
 
   # Health check

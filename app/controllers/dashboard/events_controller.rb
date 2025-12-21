@@ -13,7 +13,7 @@ module Dashboard
     private
 
     def set_error
-      @error = current_project.error_groups.find(params[:error_id])
+      @error = @project.error_groups.find(params[:error_id])
     end
   end
 end

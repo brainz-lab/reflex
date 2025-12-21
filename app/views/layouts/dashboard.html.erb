@@ -25,16 +25,32 @@
             <span class="text-[15px] font-semibold tracking-tight" style="color: #1A1A1A;">Reflex</span>
           <% end %>
 
-          <div class="flex items-center gap-6">
-            <div class="flex items-center gap-4">
-              <%= link_to dashboard_errors_path, class: "text-[13px] font-medium transition-colors", style: "color: #1A1A1A;" do %>
-                Errors
-              <% end %>
+          <% if @project&.persisted? %>
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-3">
+                <span style="color: #C4C0B8;">/</span>
+                <%= link_to @project.name, dashboard_project_errors_path(@project), class: "text-[14px] hover:underline", style: "color: #6B6760;" %>
+              </div>
+              <div class="flex items-center gap-4">
+                <% errors_active = controller_name == 'errors' %>
+                <% analytics_active = action_name == 'analytics' %>
+                <% setup_active = action_name == 'setup' %>
+                <% mcp_setup_active = action_name == 'mcp_setup' %>
+                <%= link_to dashboard_project_errors_path(@project), class: "text-[13px] font-medium transition-colors", style: errors_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
+                  Errors
+                <% end %>
+                <%= link_to analytics_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: analytics_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
+                  Analytics
+                <% end %>
+                <%= link_to setup_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: setup_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
+                  Setup
+                <% end %>
+                <%= link_to mcp_setup_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: mcp_setup_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
+                  MCP
+                <% end %>
+              </div>
             </div>
-            <div class="flex items-center gap-2 text-[13px]" style="color: #8B8780;">
-              <span><%= current_project&.name || 'Development' %></span>
-            </div>
-          </div>
+          <% end %>
         </div>
       </div>
     </header>

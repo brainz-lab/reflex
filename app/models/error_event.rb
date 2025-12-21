@@ -9,18 +9,34 @@ class ErrorEvent < ApplicationRecord
 
   def parsed_backtrace
     backtrace.map do |frame|
-      {
-        file: frame['file'],
-        line: frame['line'],
-        function: frame['function'],
-        context: frame['context'],  # Lines of code around the error
-        in_app: frame['in_app']     # Is this our code or a gem?
-      }
+      if frame.is_a?(String)
+        # Parse string format: "app/models/user.rb:42:in `full_name'"
+        match = frame.match(/^(.+):(\d+):in [`'](.+)'?$/)
+        if match
+          {
+            file: match[1],
+            line: match[2].to_i,
+            function: match[3],
+            in_app: !match[1].include?('gems/')
+          }
+        else
+          { file: frame, line: nil, function: nil, in_app: true }
+        end
+      else
+        {
+          file: frame['file'],
+          line: frame['line'],
+          function: frame['function'],
+          context: frame['context'],
+          in_app: frame['in_app']
+        }
+      end
     end
   end
 
   def app_backtrace
-    parsed_backtrace.select { |f| f[:in_app] }
+    result = parsed_backtrace.select { |f| f[:in_app] }
+    result.any? ? result : parsed_backtrace  # Fall back to all frames if none marked in_app
   end
 
   def first_app_frame

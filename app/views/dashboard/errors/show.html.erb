@@ -1,7 +1,7 @@
 <div class="space-y-8">
   <!-- Back link -->
   <div>
-    <%= link_to dashboard_errors_path, class: "inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-70", style: "color: #8B8780;" do %>
+    <%= link_to dashboard_project_errors_path(@project), class: "inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-70", style: "color: #8B8780;" do %>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -27,16 +27,16 @@
 
     <div class="flex gap-2">
       <% if @error.status == 'unresolved' %>
-        <%= button_to 'Resolve', resolve_dashboard_error_path(@error),
+        <%= button_to 'Resolve', resolve_dashboard_project_error_path(@project, @error),
             method: :post,
             class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
             style: "background: #30A46C; color: #FFFFFE;" %>
-        <%= button_to 'Ignore', ignore_dashboard_error_path(@error),
+        <%= button_to 'Ignore', ignore_dashboard_project_error_path(@project, @error),
             method: :post,
             class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
             style: "background: #F0EFED; color: #6B6760;" %>
       <% else %>
-        <%= button_to 'Unresolve', unresolve_dashboard_error_path(@error),
+        <%= button_to 'Unresolve', unresolve_dashboard_project_error_path(@project, @error),
             method: :post,
             class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
             style: "background: #F0EFED; color: #6B6760;" %>
@@ -64,19 +64,179 @@
     </div>
   </div>
 
-  <!-- Latest Event -->
+  <!-- Event Viewer -->
   <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-    <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Latest occurrence</h2>
+    <div class="px-5 py-4 flex items-center justify-between" style="border-bottom: 1px solid #F0EFED;">
+      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">
+        Event <span style="color: #8B8780;"><%= @current_index + 1 %> of <%= @event_ids.length %></span>
+      </h2>
+
+      <!-- Event Navigation -->
+      <div class="flex items-center gap-2">
+        <!-- Prev button -->
+        <% if @prev_event_id %>
+          <%= link_to dashboard_project_error_path(@project, @error, event_id: @prev_event_id),
+              class: "p-1.5 rounded-lg transition-colors hover:bg-gray-100",
+              style: "color: #6B6760;" do %>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          <% end %>
+        <% else %>
+          <span class="p-1.5 rounded-lg" style="color: #C4C0B8;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        <% end %>
+
+        <!-- Event selector dropdown -->
+        <div class="relative" data-controller="dropdown">
+          <button type="button" data-action="click->dropdown#toggle"
+                  class="px-3 py-1.5 text-[13px] rounded-lg flex items-center gap-2 transition-colors hover:bg-gray-100"
+                  style="background: #F7F6F4; color: #1A1A1A;">
+            <span><%= @selected_event&.occurred_at&.strftime('%b %d, %H:%M:%S') %></span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="color: #8B8780;">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div data-dropdown-target="menu" class="hidden absolute right-0 mt-1 w-64 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"
+               style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+            <% @events.each_with_index do |event, idx| %>
+              <%= link_to dashboard_project_error_path(@project, @error, event_id: event.id),
+                  class: "block px-3 py-2 text-[13px] transition-colors hover:bg-gray-50 #{event.id == @selected_event&.id ? 'bg-gray-50' : ''}",
+                  style: "border-bottom: 1px solid #F0EFED; color: #1A1A1A;" do %>
+                <div class="flex items-center justify-between">
+                  <span><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
+                  <span class="text-[11px] px-1.5 py-0.5 rounded" style="background: #F0EFED; color: #6B6760;">
+                    <%= event.environment || 'unknown' %>
+                  </span>
+                </div>
+                <div class="text-[11px] mt-0.5" style="color: #8B8780;">
+                  <%= event.user_id || 'anonymous' %> · <%= event.commit&.slice(0, 7) || 'no commit' %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Next button -->
+        <% if @next_event_id %>
+          <%= link_to dashboard_project_error_path(@project, @error, event_id: @next_event_id),
+              class: "p-1.5 rounded-lg transition-colors hover:bg-gray-100",
+              style: "color: #6B6760;" do %>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          <% end %>
+        <% else %>
+          <span class="p-1.5 rounded-lg" style="color: #C4C0B8;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        <% end %>
+      </div>
     </div>
 
-    <% if @latest_event %>
+    <% if @selected_event %>
       <div class="p-5">
         <!-- Backtrace -->
-        <div class="rounded-lg overflow-hidden" style="background: #1A1A1A;">
-          <pre class="p-4 text-[13px] font-mono overflow-x-auto" style="color: #E8E5E0;"><% @latest_event.app_backtrace.each do |frame| %><span style="color: #8B8780;"><%= frame[:file] %>:<%= frame[:line] %></span> in <span style="color: #E54D2E;"><%= frame[:function] %></span>
+        <% if @selected_event.app_backtrace.any? %>
+          <div class="rounded-lg overflow-hidden" style="background: #1A1A1A;">
+            <pre class="p-4 text-[13px] font-mono overflow-x-auto" style="color: #E8E5E0;"><% @selected_event.app_backtrace.each do |frame| %><span style="color: #8B8780;"><%= frame[:file] %><%= ":#{frame[:line]}" if frame[:line] %></span><%= " in " if frame[:function] %><span style="color: #E54D2E;"><%= frame[:function] %></span>
 <% end %></pre>
-        </div>
+          </div>
+        <% end %>
+
+        <!-- Session Timeline (Breadcrumbs) -->
+        <% if @selected_event.breadcrumbs.present? %>
+          <div class="mt-6">
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-4" style="color: #A19F9A;">Session Timeline</h3>
+            <div class="relative">
+              <!-- Timeline line -->
+              <div class="absolute left-[7px] top-2 bottom-2 w-[2px]" style="background: #E8E5E0;"></div>
+
+              <div class="space-y-3">
+                <% @selected_event.breadcrumbs.each_with_index do |crumb, index| %>
+                  <%
+                    crumb = crumb.with_indifferent_access
+                    is_error = crumb[:level] == 'error'
+                    is_warning = crumb[:level] == 'warning'
+                    is_last = index == @selected_event.breadcrumbs.length - 1
+
+                    # Icon and color based on type
+                    icon_color = is_error ? '#E54D2E' : is_warning ? '#F5A623' : '#30A46C'
+                    bg_color = is_error ? '#FEEBE7' : is_warning ? '#FEF3E7' : '#FFFFFE'
+
+                    # Category icon
+                    category = crumb[:category] || crumb[:type]&.split('.')&.first
+                  %>
+                  <div class="flex gap-3 relative">
+                    <!-- Timeline dot -->
+                    <div class="w-4 h-4 rounded-full flex items-center justify-center z-10 flex-shrink-0 mt-0.5"
+                         style="background: <%= is_error ? '#FEEBE7' : is_warning ? '#FEF3E7' : '#DDF3E4' %>; border: 2px solid <%= icon_color %>;">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 rounded-lg px-3 py-2 text-[13px]" style="background: <%= bg_color %>; border: 1px solid <%= is_error ? '#FEEBE7' : is_warning ? '#FEF3E7' : '#E8E5E0' %>;">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <!-- Category badge -->
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-medium uppercase"
+                              style="background: #F0EFED; color: #6B6760;">
+                          <% case category %>
+                          <% when 'navigation' %>
+                            ↗ nav
+                          <% when 'ui' %>
+                            ◉ ui
+                          <% when 'http' %>
+                            ⇄ http
+                          <% when 'console' %>
+                            ⌘ log
+                          <% else %>
+                            ● <%= category %>
+                          <% end %>
+                        </span>
+
+                        <!-- Message -->
+                        <span style="color: <%= is_error ? '#CD2B31' : '#1A1A1A' %>;">
+                          <%= crumb[:message] %>
+                        </span>
+
+                        <!-- HTTP status if present -->
+                        <% if crumb.dig(:data, :status_code) %>
+                          <% status = crumb.dig(:data, :status_code) %>
+                          <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium"
+                                style="background: <%= status >= 400 ? '#FEEBE7' : '#DDF3E4' %>; color: <%= status >= 400 ? '#CD2B31' : '#18794E' %>;">
+                            <%= status %>
+                          </span>
+                        <% end %>
+                      </div>
+
+                      <!-- Timestamp -->
+                      <% if crumb[:timestamp] %>
+                        <div class="mt-1 text-[11px]" style="color: #A19F9A;">
+                          <%= Time.parse(crumb[:timestamp]).strftime('%H:%M:%S') %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+
+                <!-- Error marker -->
+                <div class="flex gap-3 relative">
+                  <div class="w-4 h-4 rounded-full flex items-center justify-center z-10 flex-shrink-0 mt-0.5"
+                       style="background: #E54D2E;">
+                    <span class="text-white text-[10px]">✕</span>
+                  </div>
+                  <div class="flex-1 rounded-lg px-3 py-2 text-[13px] font-medium" style="background: #FEEBE7; border: 1px solid #E54D2E; color: #CD2B31;">
+                    <%= @error.error_class %>: <%= @error.short_message %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
 
         <!-- Context -->
         <div class="mt-5 grid grid-cols-2 gap-6">
@@ -85,15 +245,15 @@
             <dl class="space-y-2 text-[14px]">
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">Method</dt>
-                <dd style="color: #1A1A1A;"><%= @latest_event.request_method || '-' %></dd>
+                <dd style="color: #1A1A1A;"><%= @selected_event.request_method || '-' %></dd>
               </div>
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">Path</dt>
-                <dd style="color: #1A1A1A;"><%= @latest_event.request_path || '-' %></dd>
+                <dd style="color: #1A1A1A;"><%= @selected_event.request_path || '-' %></dd>
               </div>
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">ID</dt>
-                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @latest_event.request_id || '-' %></dd>
+                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @selected_event.request_id || '-' %></dd>
               </div>
             </dl>
           </div>
@@ -103,24 +263,24 @@
             <dl class="space-y-2 text-[14px]">
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">Environment</dt>
-                <dd style="color: #1A1A1A;"><%= @latest_event.environment || '-' %></dd>
+                <dd style="color: #1A1A1A;"><%= @selected_event.environment || '-' %></dd>
               </div>
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">Commit</dt>
-                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @latest_event.commit&.slice(0, 7) || '-' %></dd>
+                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @selected_event.commit&.slice(0, 7) || '-' %></dd>
               </div>
               <div class="flex gap-2">
                 <dt style="color: #A19F9A;">User</dt>
-                <dd style="color: #1A1A1A;"><%= @latest_event.user_id || '—' %></dd>
+                <dd style="color: #1A1A1A;"><%= @selected_event.user_id || '—' %></dd>
               </div>
             </dl>
           </div>
         </div>
 
-        <% if @latest_event.context.present? %>
+        <% if @selected_event.context.present? %>
           <div class="mt-5">
             <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Custom context</h3>
-            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@latest_event.context) %></pre>
+            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@selected_event.context) %></pre>
           </div>
         <% end %>
       </div>
@@ -137,13 +297,19 @@
 
     <% if @events.any? %>
       <% @events.each_with_index do |event, index| %>
-        <div class="flex items-center gap-4 px-5 py-3 text-[13px]" style="<%= index < @events.size - 1 ? 'border-bottom: 1px solid #F0EFED;' : '' %>">
+        <% is_selected = event.id == @selected_event&.id %>
+        <%= link_to dashboard_project_error_path(@project, @error, event_id: event.id),
+            class: "flex items-center gap-4 px-5 py-3 text-[13px] transition-colors hover:bg-gray-50",
+            style: "#{index < @events.size - 1 ? 'border-bottom: 1px solid #F0EFED;' : ''} #{is_selected ? 'background: #FEF8F7;' : ''}" do %>
           <span style="color: #8B8780;"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
           <span class="px-2 py-0.5 rounded text-[11px] font-medium" style="background: #F0EFED; color: #6B6760;"><%= event.environment || 'unknown' %></span>
           <span class="font-mono text-[12px]" style="color: #A19F9A;"><%= event.commit&.slice(0, 7) %></span>
           <span style="color: #6B6760;"><%= event.user_id || 'anonymous' %></span>
           <span class="truncate" style="color: #A19F9A;"><%= event.request_path %></span>
-        </div>
+          <% if is_selected %>
+            <span class="ml-auto text-[11px] font-medium" style="color: #E54D2E;">viewing</span>
+          <% end %>
+        <% end %>
       <% end %>
     <% else %>
       <div class="p-5 text-[14px]" style="color: #8B8780;">No events recorded yet.</div>

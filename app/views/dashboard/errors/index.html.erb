@@ -1,4 +1,4 @@
-<div class="space-y-8" data-controller="live-errors" data-live-errors-project-id-value="<%= current_project.id %>">
+<div class="space-y-8" data-controller="live-errors" data-live-errors-project-id-value="<%= @project.id %>">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
@@ -19,7 +19,7 @@
     <div class="flex gap-2">
       <% %w[unresolved resolved ignored].each do |status| %>
         <% active = params[:status] == status || (params[:status].nil? && status == 'unresolved') %>
-        <%= link_to dashboard_errors_path(status: status),
+        <%= link_to dashboard_project_errors_path(@project, status: status),
             class: "px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors",
             style: active ? "background: #1A1A1A; color: #FFFFFE;" : "background: #FFFFFE; border: 1px solid #E8E5E0; color: #6B6760;" do %>
           <%= status.capitalize %>

@@ -1,7 +1,7 @@
 module Dashboard
   class ErrorsController < BaseController
     def index
-      @errors = current_project.error_groups
+      @errors = @project.error_groups
 
       @errors = case params[:status]
       when 'resolved' then @errors.resolved
@@ -12,34 +12,47 @@ module Dashboard
       @errors = @errors.recent.limit(100)
 
       @stats = {
-        unresolved: current_project.error_groups.unresolved.count,
-        resolved: current_project.error_groups.resolved.count,
-        events_today: current_project.error_events.where('occurred_at >= ?', Time.current.beginning_of_day).count
+        unresolved: @project.error_groups.unresolved.count,
+        resolved: @project.error_groups.resolved.count,
+        events_today: @project.error_events.where('occurred_at >= ?', Time.current.beginning_of_day).count
       }
     end
 
     def show
-      @error = current_project.error_groups.find(params[:id])
-      @latest_event = @error.events.recent.first
-      @events = @error.events.recent.limit(20)
+      @error = @project.error_groups.find(params[:id])
+      @events = @error.events.recent
+
+      # Allow selecting a specific event
+      if params[:event_id].present?
+        @selected_event = @events.find_by(id: params[:event_id])
+      end
+      @selected_event ||= @events.first
+
+      # Calculate position and navigation
+      @event_ids = @events.pluck(:id)
+      @current_index = @event_ids.index(@selected_event&.id) || 0
+      @prev_event_id = @event_ids[@current_index - 1] if @current_index > 0
+      @next_event_id = @event_ids[@current_index + 1] if @current_index < @event_ids.length - 1
+
+      @events = @events.limit(20)
     end
 
     def resolve
-      @error = current_project.error_groups.find(params[:id])
+      @error = @project.error_groups.find(params[:id])
       @error.resolve!
-      redirect_to dashboard_error_path(@error), notice: 'Error marked as resolved'
+      redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as resolved'
     end
 
     def ignore
-      @error = current_project.error_groups.find(params[:id])
+      @error = @project.error_groups.find(params[:id])
       @error.ignore!
-      redirect_to dashboard_errors_path, notice: 'Error ignored'
+      redirect_to dashboard_project_errors_path(@project), notice: 'Error ignored'
     end
 
     def unresolve
-      @error = current_project.error_groups.find(params[:id])
+      @error = @project.error_groups.find(params[:id])
       @error.unresolve!
-      redirect_to dashboard_error_path(@error), notice: 'Error marked as unresolved'
+      redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as unresolved'
     end
   end
 end

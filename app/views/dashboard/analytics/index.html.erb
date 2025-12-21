@@ -1,0 +1,493 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Analytics</h1>
+      <p class="text-[14px] mt-1" style="color: #8B8780;">Error trends and insights</p>
+    </div>
+
+    <!-- Period selector -->
+    <div class="flex gap-1 p-1 rounded-lg" style="background: #F0EFED;">
+      <% %w[24h 7d 30d 90d].each do |period| %>
+        <% active = @period == period %>
+        <%= link_to dashboard_analytics_path(period: period),
+            class: "px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors",
+            style: active ? "background: #FFFFFE; color: #1A1A1A; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" : "color: #6B6760;" do %>
+          <%= period %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Overview Stats -->
+  <div class="grid grid-cols-4 gap-4">
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Events</p>
+      <p class="text-[28px] font-semibold mt-1" style="color: #1A1A1A;"><%= number_with_delimiter(@stats[:events_in_period]) %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">in last <%= @period %></p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Unresolved</p>
+      <p class="text-[28px] font-semibold mt-1" style="color: #E54D2E;"><%= @stats[:unresolved] %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">errors need attention</p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Resolved</p>
+      <p class="text-[28px] font-semibold mt-1" style="color: #30A46C;"><%= @stats[:resolved] %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">errors fixed</p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Total Errors</p>
+      <p class="text-[28px] font-semibold mt-1" style="color: #1A1A1A;"><%= @stats[:total_errors] %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">unique error types</p>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Events Over Time Chart -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Events over time</h2>
+      </div>
+      <div class="p-5">
+        <div class="h-64">
+          <canvas id="eventsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Errors by Class -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Errors by class</h2>
+      </div>
+      <div class="p-5">
+        <div class="h-64">
+          <canvas id="errorsByClassChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-6">
+    <!-- Top Errors -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Most frequent errors</h2>
+      </div>
+      <% if @top_errors.any? %>
+        <% @top_errors.each_with_index do |error, i| %>
+          <%= link_to dashboard_error_path(error),
+              class: "block px-5 py-3 transition-colors hover:bg-gray-50",
+              style: i < @top_errors.size - 1 ? "border-bottom: 1px solid #F0EFED;" : "" do %>
+            <div class="flex items-center justify-between">
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-medium truncate" style="color: #E54D2E;"><%= error.error_class %></p>
+                <p class="text-[12px] truncate mt-0.5" style="color: #8B8780;"><%= error.short_message %></p>
+              </div>
+              <div class="ml-4 text-right">
+                <span class="text-[15px] font-semibold" style="color: #1A1A1A;"><%= error.event_count %></span>
+                <p class="text-[11px]" style="color: #A19F9A;">events</p>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="px-5 py-8 text-center text-[14px]" style="color: #8B8780;">
+          No errors in this period
+        </div>
+      <% end %>
+    </div>
+
+    <!-- New Errors -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">New errors</h2>
+      </div>
+      <% if @new_errors.any? %>
+        <% @new_errors.each_with_index do |error, i| %>
+          <%= link_to dashboard_error_path(error),
+              class: "block px-5 py-3 transition-colors hover:bg-gray-50",
+              style: i < @new_errors.size - 1 ? "border-bottom: 1px solid #F0EFED;" : "" do %>
+            <div class="flex items-center justify-between">
+              <div class="flex-1 min-w-0">
+                <p class="text-[13px] font-medium truncate" style="color: #E54D2E;"><%= error.error_class %></p>
+                <p class="text-[12px] truncate mt-0.5" style="color: #8B8780;"><%= error.location %></p>
+              </div>
+              <div class="ml-4 text-right">
+                <span class="text-[12px]" style="color: #8B8780;"><%= time_ago_in_words(error.first_seen_at) %> ago</span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="px-5 py-8 text-center text-[14px]" style="color: #8B8780;">
+          No new errors in this period
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-6">
+    <!-- Status Breakdown -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">By status</h2>
+      </div>
+      <div class="p-5 space-y-3">
+        <% total = @status_breakdown.values.sum.to_f %>
+        <% [['unresolved', '#E54D2E'], ['resolved', '#30A46C'], ['ignored', '#A19F9A']].each do |status, color| %>
+          <% count = @status_breakdown[status] || 0 %>
+          <% pct = total > 0 ? (count / total * 100).round : 0 %>
+          <div>
+            <div class="flex justify-between text-[13px] mb-1">
+              <span style="color: #6B6760;"><%= status.capitalize %></span>
+              <span style="color: #1A1A1A;"><%= count %></span>
+            </div>
+            <div class="h-2 rounded-full overflow-hidden" style="background: #F0EFED;">
+              <div class="h-full rounded-full" style="width: <%= pct %>%; background: <%= color %>;"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Environment Breakdown -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">By environment</h2>
+      </div>
+      <div class="p-5 space-y-3">
+        <% total = @env_breakdown.values.sum.to_f %>
+        <% colors = { 'production' => '#E54D2E', 'staging' => '#F5A623', 'development' => '#30A46C' } %>
+        <% @env_breakdown.each do |env, count| %>
+          <% pct = total > 0 ? (count / total * 100).round : 0 %>
+          <div>
+            <div class="flex justify-between text-[13px] mb-1">
+              <span style="color: #6B6760;"><%= env || 'unknown' %></span>
+              <span style="color: #1A1A1A;"><%= count %></span>
+            </div>
+            <div class="h-2 rounded-full overflow-hidden" style="background: #F0EFED;">
+              <div class="h-full rounded-full" style="width: <%= pct %>%; background: <%= colors[env] || '#8B8780' %>;"></div>
+            </div>
+          </div>
+        <% end %>
+        <% if @env_breakdown.empty? %>
+          <p class="text-[13px] text-center py-4" style="color: #8B8780;">No data</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Activity by Hour -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Activity by hour</h2>
+      </div>
+      <div class="p-5">
+        <% max_hour = @events_by_hour.values.max || 1 %>
+        <div class="grid grid-cols-12 gap-1">
+          <% (0..23).each do |hour| %>
+            <% count = @events_by_hour[hour] || 0 %>
+            <% intensity = max_hour > 0 ? (count.to_f / max_hour) : 0 %>
+            <div class="aspect-square rounded-sm relative group cursor-default"
+                 style="background: rgba(229, 77, 46, <%= [intensity, 0.1].max %>);">
+              <!-- Tooltip -->
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                <div class="px-2 py-1 rounded text-[10px] font-medium whitespace-nowrap"
+                     style="background: #1A1A1A; color: #FFFFFE;">
+                  <%= hour %>:00 - <%= count %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="flex justify-between mt-2 text-[10px]" style="color: #A19F9A;">
+          <span>12am</span>
+          <span>12pm</span>
+          <span>11pm</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Affected Users -->
+  <% if @affected_users.any? %>
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Most affected users</h2>
+      </div>
+      <div class="divide-y" style="border-color: #F0EFED;">
+        <% @affected_users.each do |(user_id, user_email), count| %>
+          <div class="flex items-center justify-between px-5 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-medium"
+                   style="background: #F0EFED; color: #6B6760;">
+                <%= (user_email || user_id || 'U')[0].upcase %>
+              </div>
+              <div>
+                <p class="text-[13px] font-medium" style="color: #1A1A1A;"><%= user_email || user_id %></p>
+                <p class="text-[11px]" style="color: #A19F9A;">ID: <%= user_id %></p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[15px] font-semibold" style="color: #E54D2E;"><%= count %></span>
+              <p class="text-[11px]" style="color: #A19F9A;">errors</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Deploy & Infrastructure Analytics -->
+  <div class="grid grid-cols-3 gap-6">
+    <!-- Errors by Release -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">By release</h2>
+      </div>
+      <% if @errors_by_release.any? %>
+        <div class="divide-y" style="border-color: #F0EFED;">
+          <% max_release = @errors_by_release.values.max.to_f %>
+          <% @errors_by_release.each do |release, count| %>
+            <div class="px-5 py-3">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[13px] font-mono" style="color: #1A1A1A;"><%= release %></span>
+                <span class="text-[13px] font-semibold" style="color: #E54D2E;"><%= count %></span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: #F0EFED;">
+                <div class="h-full rounded-full" style="width: <%= (count / max_release * 100).round %>%; background: #E54D2E;"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="px-5 py-8 text-center text-[13px]" style="color: #8B8780;">No release data</div>
+      <% end %>
+    </div>
+
+    <!-- Errors by Commit -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">By commit</h2>
+      </div>
+      <% if @errors_by_commit.any? %>
+        <div class="divide-y" style="border-color: #F0EFED;">
+          <% max_commit = @errors_by_commit.values.max.to_f %>
+          <% @errors_by_commit.each do |commit, count| %>
+            <div class="px-5 py-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[12px] font-mono px-2 py-0.5 rounded" style="background: #F0EFED; color: #6B6760;"><%= commit[0..6] %></span>
+                <span class="text-[13px] font-semibold" style="color: #E54D2E;"><%= count %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="px-5 py-8 text-center text-[13px]" style="color: #8B8780;">No commit data</div>
+      <% end %>
+    </div>
+
+    <!-- Errors by Server -->
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">By server</h2>
+      </div>
+      <% if @errors_by_server.any? %>
+        <div class="divide-y" style="border-color: #F0EFED;">
+          <% max_server = @errors_by_server.values.max.to_f %>
+          <% @errors_by_server.each do |server, count| %>
+            <div class="px-5 py-3">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full" style="background: #30A46C;"></span>
+                  <span class="text-[13px]" style="color: #1A1A1A;"><%= server %></span>
+                </div>
+                <span class="text-[13px] font-semibold" style="color: #E54D2E;"><%= count %></span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: #F0EFED;">
+                <div class="h-full rounded-full" style="width: <%= (count / max_server * 100).round %>%; background: #E54D2E;"></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="px-5 py-8 text-center text-[13px]" style="color: #8B8780;">No server data</div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Branch Analytics -->
+  <% if @errors_by_branch.any? %>
+    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Errors by branch</h2>
+      </div>
+      <div class="p-5">
+        <div class="flex gap-3 flex-wrap">
+          <% max_branch = @errors_by_branch.values.max.to_f %>
+          <% @errors_by_branch.each do |branch, count| %>
+            <% intensity = (count / max_branch * 0.8 + 0.2) %>
+            <div class="flex items-center gap-2 px-3 py-2 rounded-lg" style="background: rgba(229, 77, 46, <%= intensity * 0.15 %>); border: 1px solid rgba(229, 77, 46, <%= intensity * 0.3 %>);">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color: #E54D2E;">
+                <path d="M5 3v8m6-4v4m-6 0a2 2 0 104 0 2 2 0 00-4 0zm6 4a2 2 0 104 0 2 2 0 00-4 0zm-2-8a2 2 0 104 0 2 2 0 00-4 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="text-[13px] font-medium" style="color: #1A1A1A;"><%= branch %></span>
+              <span class="text-[12px] font-semibold px-1.5 py-0.5 rounded" style="background: #E54D2E; color: #FFFFFE;"><%= count %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Summary Stats Row -->
+  <div class="grid grid-cols-4 gap-4">
+    <div class="rounded-xl px-5 py-4 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[24px] font-semibold" style="color: #1A1A1A;"><%= @errors_by_release.count %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">releases with errors</p>
+    </div>
+    <div class="rounded-xl px-5 py-4 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[24px] font-semibold" style="color: #1A1A1A;"><%= @errors_by_commit.count %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">commits with errors</p>
+    </div>
+    <div class="rounded-xl px-5 py-4 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[24px] font-semibold" style="color: #1A1A1A;"><%= @errors_by_server.count %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">servers affected</p>
+    </div>
+    <div class="rounded-xl px-5 py-4 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[24px] font-semibold" style="color: #1A1A1A;"><%= @affected_users.count %></p>
+      <p class="text-[12px] mt-1" style="color: #8B8780;">users affected</p>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" data-turbo-track="reload"></script>
+<script>
+  // Store chart instances for cleanup
+  window.analyticsCharts = window.analyticsCharts || {};
+
+  function initializeCharts() {
+    // Chart data from Rails
+    const eventsData = <%= raw @chart_data.to_json %>;
+    const errorsByClass = <%= raw @errors_by_class.to_json %>;
+
+    // Common chart options
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1A1A1A',
+          titleFont: { size: 12, family: 'Inter' },
+          bodyFont: { size: 12, family: 'Inter' },
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            font: { size: 10, family: 'Inter' },
+            color: '#8B8780',
+            maxRotation: 45
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#F0EDE8' },
+          ticks: {
+            font: { size: 10, family: 'Inter' },
+            color: '#8B8780',
+            precision: 0
+          }
+        }
+      }
+    };
+
+    // Destroy existing charts if they exist
+    if (window.analyticsCharts.eventsChart) {
+      window.analyticsCharts.eventsChart.destroy();
+    }
+    if (window.analyticsCharts.errorsByClassChart) {
+      window.analyticsCharts.errorsByClassChart.destroy();
+    }
+
+    // Get canvas elements
+    const eventsCanvas = document.getElementById('eventsChart');
+    const errorsByClassCanvas = document.getElementById('errorsByClassChart');
+
+    if (eventsCanvas && typeof Chart !== 'undefined') {
+      // Events Over Time Chart
+      window.analyticsCharts.eventsChart = new Chart(eventsCanvas, {
+        type: 'line',
+        data: {
+          labels: eventsData.map(d => d.date),
+          datasets: [{
+            data: eventsData.map(d => d.count),
+            borderColor: '#E54D2E',
+            backgroundColor: 'rgba(229, 77, 46, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#E54D2E'
+          }]
+        },
+        options: commonOptions
+      });
+    }
+
+    if (errorsByClassCanvas && typeof Chart !== 'undefined' && errorsByClass.length > 0) {
+      // Errors by Class Chart (horizontal bar)
+      window.analyticsCharts.errorsByClassChart = new Chart(errorsByClassCanvas, {
+        type: 'bar',
+        data: {
+          labels: errorsByClass.map(d => d.error_class),
+          datasets: [{
+            data: errorsByClass.map(d => d.count),
+            backgroundColor: '#E54D2E',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          ...commonOptions,
+          indexAxis: 'y',
+          scales: {
+            ...commonOptions.scales,
+            x: {
+              ...commonOptions.scales.x,
+              beginAtZero: true,
+              grid: { color: '#F0EDE8' }
+            },
+            y: {
+              ...commonOptions.scales.y,
+              grid: { display: false },
+              ticks: {
+                font: { size: 11, family: 'Inter' },
+                color: '#1A1A1A'
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // Initialize on Turbo load and regular page load
+  document.addEventListener('turbo:load', initializeCharts);
+
+  // Also run immediately if Turbo already loaded
+  if (document.readyState === 'complete') {
+    initializeCharts();
+  }
+</script>

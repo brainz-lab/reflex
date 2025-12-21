@@ -1,4 +1,4 @@
-<%= link_to dashboard_error_path(error),
+<%= link_to dashboard_project_error_path(@project, error),
     class: "block px-5 py-4 transition-colors hover:bg-gray-50",
     style: local_assigns[:last] ? "" : "border-bottom: 1px solid #F0EFED;" do %>
   <div class="flex items-start gap-4">
