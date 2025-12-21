@@ -1,0 +1,43 @@
+<%= link_to dashboard_error_path(error),
+    class: "block px-5 py-4 transition-colors hover:bg-gray-50",
+    style: local_assigns[:last] ? "" : "border-bottom: 1px solid #F0EFED;" do %>
+  <div class="flex items-start gap-4">
+    <!-- Status indicator -->
+    <div class="mt-1.5">
+      <% case error.status %>
+      <% when 'unresolved' %>
+        <span class="w-2 h-2 rounded-full block" style="background: #E54D2E;"></span>
+      <% when 'resolved' %>
+        <span class="w-2 h-2 rounded-full block" style="background: #30A46C;"></span>
+      <% when 'ignored' %>
+        <span class="w-2 h-2 rounded-full block" style="background: #C4C0B8;"></span>
+      <% end %>
+    </div>
+
+    <!-- Error info -->
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <span class="text-[14px] font-medium" style="color: #E54D2E;"><%= error.error_class %></span>
+        <% if error.location %>
+          <span class="text-[13px]" style="color: #C4C0B8;">&middot;</span>
+          <span class="text-[13px] truncate" style="color: #8B8780;"><%= error.location %></span>
+        <% end %>
+      </div>
+      <p class="text-[14px] truncate mt-1" style="color: #6B6760;"><%= error.short_message %></p>
+      <div class="flex items-center gap-3 mt-2 text-[12px]" style="color: #A19F9A;">
+        <span><%= error.event_count %> events</span>
+        <span>&middot;</span>
+        <span><%= time_ago_in_words(error.last_seen_at) %> ago</span>
+        <% if error.last_commit %>
+          <span>&middot;</span>
+          <span class="font-mono px-1.5 py-0.5 rounded" style="background: #F0EFED;"><%= error.last_commit[0..6] %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Event count badge -->
+    <div class="text-right">
+      <span class="text-[18px] font-semibold" style="color: #C4C0B8;"><%= error.event_count %></span>
+    </div>
+  </div>
+<% end %>

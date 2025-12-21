@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <title>Reflex - Error Tracking</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body class="h-full antialiased" style="font-family: 'Inter', system-ui, sans-serif; background: #FAF9F7;">
+  <div class="min-h-full">
+    <!-- Header -->
+    <header class="border-b" style="border-color: #E8E5E0; background: #FFFFFE;">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="flex h-16 items-center justify-between">
+          <%= link_to dashboard_root_path, class: "flex items-center gap-2.5" do %>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#E54D2E"/>
+            </svg>
+            <span class="text-[15px] font-semibold tracking-tight" style="color: #1A1A1A;">Reflex</span>
+          <% end %>
+
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4">
+              <%= link_to dashboard_errors_path, class: "text-[13px] font-medium transition-colors", style: "color: #1A1A1A;" do %>
+                Errors
+              <% end %>
+            </div>
+            <div class="flex items-center gap-2 text-[13px]" style="color: #8B8780;">
+              <span><%= current_project&.name || 'Development' %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-5xl mx-auto px-6 py-10">
+      <% if flash[:notice] %>
+        <div class="mb-6 px-4 py-3 rounded-lg text-[14px]" style="background: #E8F5E8; color: #2D5A2D;">
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div class="mb-6 px-4 py-3 rounded-lg text-[14px]" style="background: #FEE8E8; color: #8B2D2D;">
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <%= yield %>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<div class="space-y-8" data-controller="live-errors" data-live-errors-project-id-value="<%= current_project.id %>">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Errors</h1>
+      <p class="text-[14px] mt-1" style="color: #8B8780;">Track and resolve application errors</p>
+    </div>
+
+    <!-- Live toggle -->
+    <label class="flex items-center gap-2 text-[13px] cursor-pointer" style="color: #6B6760;">
+      <input type="checkbox" data-action="change->live-errors#toggle" data-live-errors-target="toggle"
+             class="rounded border-gray-300 text-red-500 focus:ring-red-500">
+      <span>Live updates</span>
+    </label>
+  </div>
+
+  <!-- Filters & Stats -->
+  <div class="flex items-center justify-between">
+    <div class="flex gap-2">
+      <% %w[unresolved resolved ignored].each do |status| %>
+        <% active = params[:status] == status || (params[:status].nil? && status == 'unresolved') %>
+        <%= link_to dashboard_errors_path(status: status),
+            class: "px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors",
+            style: active ? "background: #1A1A1A; color: #FFFFFE;" : "background: #FFFFFE; border: 1px solid #E8E5E0; color: #6B6760;" do %>
+          <%= status.capitalize %>
+          <% count = status == 'unresolved' ? @stats[:unresolved] : (status == 'resolved' ? @stats[:resolved] : nil) %>
+          <% if count && count > 0 %>
+            <span class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
+                  style="<%= active ? 'background: rgba(255,255,255,0.2);' : 'background: #F0EFED;' %>">
+              <%= count %>
+            </span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="text-[13px]" style="color: #8B8780;">
+      <%= @stats[:events_today] %> events today
+    </div>
+  </div>
+
+  <!-- Error list -->
+  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;" data-live-errors-target="container">
+    <% if @errors.any? %>
+      <% @errors.each_with_index do |error, index| %>
+        <%= render 'error_row', error: error, last: index == @errors.size - 1 %>
+      <% end %>
+    <% else %>
+      <div class="px-6 py-16 text-center">
+        <div class="text-[32px] mb-3">&#10003;</div>
+        <p class="text-[15px] font-medium" style="color: #1A1A1A;">No errors</p>
+        <p class="text-[14px] mt-1" style="color: #8B8780;">Everything is running smoothly</p>
+      </div>
+    <% end %>
+  </div>
+</div>

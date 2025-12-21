@@ -1,0 +1,152 @@
+<div class="space-y-8">
+  <!-- Back link -->
+  <div>
+    <%= link_to dashboard_errors_path, class: "inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-70", style: "color: #8B8780;" do %>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to errors
+    <% end %>
+  </div>
+
+  <!-- Header -->
+  <div class="flex justify-between items-start">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide rounded-full"
+              style="<%= @error.status == 'unresolved' ? 'background: #FEEBE7; color: #CD2B31;' : @error.status == 'resolved' ? 'background: #DDF3E4; color: #18794E;' : 'background: #F0EFED; color: #6B6760;' %>">
+          <%= @error.status %>
+        </span>
+      </div>
+      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #E54D2E;"><%= @error.error_class %></h1>
+      <p class="text-[15px] mt-2" style="color: #6B6760;"><%= @error.message %></p>
+      <% if @error.location %>
+        <p class="text-[13px] mt-2 font-mono" style="color: #A19F9A;"><%= @error.location %></p>
+      <% end %>
+    </div>
+
+    <div class="flex gap-2">
+      <% if @error.status == 'unresolved' %>
+        <%= button_to 'Resolve', resolve_dashboard_error_path(@error),
+            method: :post,
+            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
+            style: "background: #30A46C; color: #FFFFFE;" %>
+        <%= button_to 'Ignore', ignore_dashboard_error_path(@error),
+            method: :post,
+            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
+            style: "background: #F0EFED; color: #6B6760;" %>
+      <% else %>
+        <%= button_to 'Unresolve', unresolve_dashboard_error_path(@error),
+            method: :post,
+            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
+            style: "background: #F0EFED; color: #6B6760;" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-4 gap-4">
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Events</p>
+      <p class="text-[24px] font-semibold mt-1" style="color: #1A1A1A;"><%= @error.event_count %></p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">First seen</p>
+      <p class="text-[15px] font-medium mt-1" style="color: #1A1A1A;"><%= @error.first_seen_at&.strftime('%b %d, %H:%M') || '-' %></p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Last seen</p>
+      <p class="text-[15px] font-medium mt-1" style="color: #1A1A1A;"><%= @error.last_seen_at ? "#{time_ago_in_words(@error.last_seen_at)} ago" : '-' %></p>
+    </div>
+    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Commit</p>
+      <p class="text-[15px] font-mono mt-1" style="color: #1A1A1A;"><%= @error.last_commit&.slice(0, 7) || '—' %></p>
+    </div>
+  </div>
+
+  <!-- Latest Event -->
+  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+    <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Latest occurrence</h2>
+    </div>
+
+    <% if @latest_event %>
+      <div class="p-5">
+        <!-- Backtrace -->
+        <div class="rounded-lg overflow-hidden" style="background: #1A1A1A;">
+          <pre class="p-4 text-[13px] font-mono overflow-x-auto" style="color: #E8E5E0;"><% @latest_event.app_backtrace.each do |frame| %><span style="color: #8B8780;"><%= frame[:file] %>:<%= frame[:line] %></span> in <span style="color: #E54D2E;"><%= frame[:function] %></span>
+<% end %></pre>
+        </div>
+
+        <!-- Context -->
+        <div class="mt-5 grid grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Request</h3>
+            <dl class="space-y-2 text-[14px]">
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">Method</dt>
+                <dd style="color: #1A1A1A;"><%= @latest_event.request_method || '-' %></dd>
+              </div>
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">Path</dt>
+                <dd style="color: #1A1A1A;"><%= @latest_event.request_path || '-' %></dd>
+              </div>
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">ID</dt>
+                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @latest_event.request_id || '-' %></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Context</h3>
+            <dl class="space-y-2 text-[14px]">
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">Environment</dt>
+                <dd style="color: #1A1A1A;"><%= @latest_event.environment || '-' %></dd>
+              </div>
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">Commit</dt>
+                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @latest_event.commit&.slice(0, 7) || '-' %></dd>
+              </div>
+              <div class="flex gap-2">
+                <dt style="color: #A19F9A;">User</dt>
+                <dd style="color: #1A1A1A;"><%= @latest_event.user_id || '—' %></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <% if @latest_event.context.present? %>
+          <div class="mt-5">
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Custom context</h3>
+            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@latest_event.context) %></pre>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-5 text-[14px]" style="color: #8B8780;">No events recorded yet.</div>
+    <% end %>
+  </div>
+
+  <!-- Event History -->
+  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+    <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
+      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Recent events</h2>
+    </div>
+
+    <% if @events.any? %>
+      <% @events.each_with_index do |event, index| %>
+        <div class="flex items-center gap-4 px-5 py-3 text-[13px]" style="<%= index < @events.size - 1 ? 'border-bottom: 1px solid #F0EFED;' : '' %>">
+          <span style="color: #8B8780;"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
+          <span class="px-2 py-0.5 rounded text-[11px] font-medium" style="background: #F0EFED; color: #6B6760;"><%= event.environment || 'unknown' %></span>
+          <span class="font-mono text-[12px]" style="color: #A19F9A;"><%= event.commit&.slice(0, 7) %></span>
+          <span style="color: #6B6760;"><%= event.user_id || 'anonymous' %></span>
+          <span class="truncate" style="color: #A19F9A;"><%= event.request_path %></span>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="p-5 text-[14px]" style="color: #8B8780;">No events recorded yet.</div>
+    <% end %>
+  </div>
+</div>
