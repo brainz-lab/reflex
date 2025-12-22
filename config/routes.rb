@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   # API
   namespace :api do
     namespace :v1 do
+      # Project provisioning (internal API for SDK auto-setup)
+      post 'projects/provision', to: 'projects#provision'
+      get 'projects/lookup', to: 'projects#lookup'
+
       # Ingest errors
       post 'errors', to: 'events#create'
       post 'errors/batch', to: 'events#batch'

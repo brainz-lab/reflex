@@ -3,6 +3,11 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Allow Docker service names and localhost variants
+  config.hosts << "reflex"
+  config.hosts << "reflex.localhost"
+  config.hosts << /.*\.localhost/
+
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 

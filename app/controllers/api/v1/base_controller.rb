@@ -10,6 +10,17 @@ module Api
 
       def authenticate!
         raw_key = extract_api_key
+
+        # First try to find project by auto-provisioned API key (rfx_xxx format)
+        if raw_key&.start_with?('rfx_')
+          @current_project = find_project_by_api_key(raw_key)
+          if @current_project
+            @key_info = { valid: true, features: { reflex: true } }
+            return
+          end
+        end
+
+        # Fall back to Platform validation
         @key_info = PlatformClient.validate_key(raw_key)
 
         unless @key_info[:valid]
@@ -22,6 +33,11 @@ module Api
           name: @key_info[:project_name],
           environment: @key_info[:environment] || 'live'
         )
+      end
+
+      def find_project_by_api_key(api_key)
+        # Find project where settings->api_key matches
+        Project.where("settings->>'api_key' = ?", api_key).first
       end
 
       def check_feature_access!
