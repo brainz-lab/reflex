@@ -3,6 +3,7 @@ module Mcp
     TOOLS = {
       'reflex_list' => Tools::ReflexList,
       'reflex_show' => Tools::ReflexShow,
+      'reflex_events' => Tools::ReflexEvents,
       'reflex_resolve' => Tools::ReflexResolve,
       'reflex_ignore' => Tools::ReflexIgnore,
       'reflex_unresolve' => Tools::ReflexUnresolve,

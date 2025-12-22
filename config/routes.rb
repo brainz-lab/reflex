@@ -6,12 +6,16 @@ Rails.application.routes.draw do
       post 'errors', to: 'events#create'
       post 'errors/batch', to: 'events#batch'
 
+      # Capture messages (without exception)
+      post 'messages', to: 'events#create_message'
+
       # Query errors
       resources :errors, only: [:index, :show] do
         member do
           post :resolve
           post :ignore
           post :unresolve
+          get :events
         end
       end
     end

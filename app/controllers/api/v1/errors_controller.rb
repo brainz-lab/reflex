@@ -61,6 +61,21 @@ module Api
         render json: { unresolved: true, error: serialize_error(error) }
       end
 
+      # GET /api/v1/errors/:id/events
+      def events
+        error = current_project.error_groups.find(params[:id])
+        events = error.events.recent
+
+        events = events.where(environment: params[:environment]) if params[:environment].present?
+        events = events.limit(params[:limit] || 50)
+
+        render json: {
+          error_id: error.id,
+          total_count: error.event_count,
+          events: events.map { |e| serialize_event(e) }
+        }
+      end
+
       private
 
       def serialize_error(error)
