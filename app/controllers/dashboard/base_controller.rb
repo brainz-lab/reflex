@@ -42,6 +42,9 @@ module Dashboard
 
       @project = Project.find(project_id)
 
+      # Skip authorization check in development (dev keys auto-match)
+      return if Rails.env.development?
+
       # Verify the project matches the API key's project
       if @api_key_info && @api_key_info[:project_id] != @project.platform_project_id
         redirect_to dashboard_root_path, alert: 'Project access denied'
@@ -63,7 +66,17 @@ module Dashboard
         session[:api_key] = params[:api_key]
         redirect_to request.path
       elsif Rails.env.development?
-        # In dev, redirect to create a new project
+        # In dev, auto-authenticate if accessing a specific project
+        project_id = params[:project_id] || params[:id]
+        if project_id.present?
+          project = Project.find_by(id: project_id)
+          if project
+            session[:api_key] = "dev_#{project.id}"
+            redirect_to request.path
+            return
+          end
+        end
+        # Otherwise redirect to create a new project
         redirect_to new_dashboard_project_path
       else
         # Show auth required page

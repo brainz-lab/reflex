@@ -14,90 +14,8 @@
     </label>
   </div>
 
-  <!-- Search & Filters -->
-  <div class="rounded-xl p-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-    <form action="<%= dashboard_project_errors_path(@project) %>" method="get" class="flex items-center gap-3">
-      <input type="hidden" name="status" value="<%= params[:status] || 'unresolved' %>">
-
-      <!-- Text search -->
-      <div class="flex-1 relative">
-        <input type="text" name="q" value="<%= params[:q] %>"
-               placeholder="Search errors by class, message, or file..."
-               class="w-full pl-9 pr-3 py-2 rounded-lg text-[14px] outline-none"
-               style="background: #FAF9F7; border: 1px solid #E8E5E0; color: #1A1A1A;">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: #8B8780;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </div>
-
-      <!-- Error class filter -->
-      <select name="error_class" class="px-3 py-2 rounded-lg text-[13px] outline-none"
-              style="background: #FAF9F7; border: 1px solid #E8E5E0; color: #1A1A1A;">
-        <option value="">All types</option>
-        <% @error_classes.each do |ec| %>
-          <option value="<%= ec %>" <%= 'selected' if params[:error_class] == ec %>><%= ec %></option>
-        <% end %>
-      </select>
-
-      <!-- Environment filter -->
-      <select name="environment" class="px-3 py-2 rounded-lg text-[13px] outline-none"
-              style="background: #FAF9F7; border: 1px solid #E8E5E0; color: #1A1A1A;">
-        <option value="">All envs</option>
-        <% @environments.each do |env| %>
-          <option value="<%= env %>" <%= 'selected' if params[:environment] == env %>><%= env.capitalize %></option>
-        <% end %>
-      </select>
-
-      <button type="submit" class="px-4 py-2 rounded-lg text-[13px] font-medium transition-colors"
-              style="background: #1A1A1A; color: #FFFFFE;">
-        Search
-      </button>
-
-      <% if params[:q].present? || params[:error_class].present? || params[:environment].present? %>
-        <%= link_to dashboard_project_errors_path(@project, status: params[:status]),
-            class: "text-[13px] hover:underline", style: "color: #8B8780;" do %>
-          Clear
-        <% end %>
-      <% end %>
-    </form>
-
-    <!-- Active filters -->
-    <% if params[:q].present? || params[:error_class].present? || params[:environment].present? %>
-      <div class="flex gap-2 mt-3 pt-3" style="border-top: 1px solid #F0EFED;">
-        <span class="text-[12px]" style="color: #8B8780;">Filters:</span>
-        <% if params[:q].present? %>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px]" style="background: #F0EFED; color: #6B6760;">
-            "<%= params[:q] %>"
-            <%= link_to dashboard_project_errors_path(@project, status: params[:status], error_class: params[:error_class], environment: params[:environment]),
-                style: "color: #8B8780;" do %>
-              &times;
-            <% end %>
-          </span>
-        <% end %>
-        <% if params[:error_class].present? %>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px]" style="background: #FEEBE7; color: #CD2B31;">
-            <%= params[:error_class] %>
-            <%= link_to dashboard_project_errors_path(@project, status: params[:status], q: params[:q], environment: params[:environment]),
-                style: "color: #CD2B31;" do %>
-              &times;
-            <% end %>
-          </span>
-        <% end %>
-        <% if params[:environment].present? %>
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[12px]" style="background: #E8F5E8; color: #2D5A2D;">
-            <%= params[:environment].capitalize %>
-            <%= link_to dashboard_project_errors_path(@project, status: params[:status], q: params[:q], error_class: params[:error_class]),
-                style: "color: #2D5A2D;" do %>
-              &times;
-            <% end %>
-          </span>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Status Filters & Stats -->
-  <div class="flex items-center justify-between">
+  <!-- Filters -->
+  <div class="flex items-center justify-between gap-4">
     <div class="flex gap-2">
       <% %w[unresolved resolved ignored].each do |status| %>
         <% active = params[:status] == status || (params[:status].nil? && status == 'unresolved') %>
@@ -116,9 +34,19 @@
       <% end %>
     </div>
 
-    <div class="text-[13px]" style="color: #8B8780;">
-      <%= @stats[:events_today] %> events today
-    </div>
+    <form action="<%= dashboard_project_errors_path(@project) %>" method="get" class="flex items-center gap-2">
+      <input type="hidden" name="status" value="<%= params[:status] || 'unresolved' %>">
+      <input type="text" name="q" value="<%= params[:q] %>"
+             placeholder="Search..."
+             class="w-48 px-3 py-1.5 rounded-lg text-[13px] outline-none"
+             style="background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;">
+      <% if params[:q].present? %>
+        <%= link_to dashboard_project_errors_path(@project, status: params[:status]),
+            class: "text-[13px]", style: "color: #8B8780;" do %>
+          Clear
+        <% end %>
+      <% end %>
+    </form>
   </div>
 
   <!-- Error list -->
