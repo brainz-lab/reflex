@@ -2,6 +2,8 @@ class ErrorEvent < ApplicationRecord
   include Timescaledb::Rails::Model
   include HypertableFindable
 
+  self.primary_key = "id"
+
   belongs_to :error_group, counter_cache: :event_count
   belongs_to :project, counter_cache: :event_count
 
