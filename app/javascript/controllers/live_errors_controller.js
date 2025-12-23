@@ -17,13 +17,39 @@ export default class extends Controller {
     this.subscription = this.consumer.subscriptions.create(
       { channel: "ErrorsChannel", project_id: this.projectIdValue },
       {
-        received: (data) => {
-          if (data.type === 'new_error') {
-            this.prependError(data)
-          }
-        }
+        received: (data) => this.handleMessage(data)
       }
     )
+  }
+
+  handleMessage(data) {
+    switch (data.type) {
+      case 'new_error':
+        this.prependError(data)
+        break
+      case 'error_resolved':
+        this.handleStatusChange(data.error_group_id, 'resolved')
+        break
+      case 'error_ignored':
+        this.handleStatusChange(data.error_group_id, 'ignored')
+        break
+      case 'error_unresolved':
+        this.handleStatusChange(data.error_group_id, 'unresolved')
+        break
+    }
+  }
+
+  handleStatusChange(errorGroupId, status) {
+    // Find the error row and update its status or remove from list
+    const errorRow = this.containerTarget.querySelector(`[data-error-id="${errorGroupId}"]`)
+    if (errorRow) {
+      if (status === 'resolved' || status === 'ignored') {
+        // Remove from unresolved list
+        errorRow.remove()
+      }
+      // Dispatch a custom event for any listening components
+      this.dispatch("statusChange", { detail: { errorGroupId, status } })
+    }
   }
 
   stop() {

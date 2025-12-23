@@ -58,18 +58,21 @@ module Dashboard
     def resolve
       @error = @project.error_groups.find(params[:id])
       @error.resolve!
+      ErrorsChannel.broadcast_error_resolved(@project, @error)
       redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as resolved'
     end
 
     def ignore
       @error = @project.error_groups.find(params[:id])
       @error.ignore!
+      ErrorsChannel.broadcast_error_ignored(@project, @error)
       redirect_to dashboard_project_errors_path(@project), notice: 'Error ignored'
     end
 
     def unresolve
       @error = @project.error_groups.find(params[:id])
       @error.unresolve!
+      ErrorsChannel.broadcast_error_unresolved(@project, @error)
       redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as unresolved'
     end
   end

@@ -41,6 +41,7 @@ module Api
       def resolve
         error = current_project.error_groups.find(params[:id])
         error.resolve!
+        ErrorsChannel.broadcast_error_resolved(current_project, error)
 
         render json: { resolved: true, error: serialize_error(error) }
       end
@@ -49,6 +50,7 @@ module Api
       def ignore
         error = current_project.error_groups.find(params[:id])
         error.ignore!
+        ErrorsChannel.broadcast_error_ignored(current_project, error)
 
         render json: { ignored: true, error: serialize_error(error) }
       end
@@ -57,6 +59,7 @@ module Api
       def unresolve
         error = current_project.error_groups.find(params[:id])
         error.unresolve!
+        ErrorsChannel.broadcast_error_unresolved(current_project, error)
 
         render json: { unresolved: true, error: serialize_error(error) }
       end
