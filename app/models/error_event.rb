@@ -17,10 +17,24 @@ class ErrorEvent < ApplicationRecord
             file: match[1],
             line: match[2].to_i,
             function: match[3],
-            in_app: !match[1].include?('gems/')
+            in_app: in_app_path?(match[1])
           }
         else
-          { file: frame, line: nil, function: nil, in_app: true }
+          { file: frame, line: nil, function: nil, in_app: false }
+        end
+      elsif frame['raw']
+        # Handle raw frames from SDK that couldn't be parsed
+        raw = frame['raw']
+        match = raw.match(/^(.+):(\d+):in [`'](.+)'?$/)
+        if match
+          {
+            file: match[1],
+            line: match[2].to_i,
+            function: match[3],
+            in_app: in_app_path?(match[1])
+          }
+        else
+          { file: raw, line: nil, function: nil, in_app: false }
         end
       else
         {
@@ -32,6 +46,17 @@ class ErrorEvent < ApplicationRecord
         }
       end
     end
+  end
+
+  def in_app_path?(path)
+    return false if path.nil?
+    return false if path.include?('/gems/')
+    return false if path.include?('vendor/')
+    return false if path.include?('/ruby/')
+
+    path.start_with?('app/', 'lib/') ||
+      path.include?('/app/') ||
+      path.include?('/lib/')
   end
 
   def app_backtrace

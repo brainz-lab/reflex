@@ -100,7 +100,14 @@ class ErrorProcessor
 
   def in_app?(file_path)
     return false if file_path.nil?
-    file_path.start_with?('app/', 'lib/') && !file_path.include?('/vendor/')
+    return false if file_path.include?('/gems/')
+    return false if file_path.include?('vendor/')
+    return false if file_path.include?('/ruby/')
+
+    # Match both relative and absolute paths containing app/ or lib/
+    file_path.start_with?('app/', 'lib/') ||
+      file_path.include?('/app/') ||
+      file_path.include?('/lib/')
   end
 
   def extract_file_path

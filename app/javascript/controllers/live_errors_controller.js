@@ -33,7 +33,7 @@ export default class extends Controller {
   prependError(data) {
     const error = data.error_group
     const html = `
-      <a href="/dashboard/errors/${error.id}" class="block hover:bg-red-50 transition border-b border-stone-100 bg-red-50/50">
+      <a href="/dashboard/projects/${this.projectIdValue}/errors/${error.id}" class="block hover:bg-red-50 transition border-b border-stone-100 bg-red-50/50">
         <div class="flex items-start gap-4 p-4">
           <div class="mt-1">
             <span class="w-2 h-2 rounded-full bg-red-500 block animate-pulse"></span>
