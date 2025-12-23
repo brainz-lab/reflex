@@ -7,7 +7,7 @@ module Dashboard
     end
 
     def show
-      @event = @error.events.find(params[:id])
+      @event = @error.events.find_by_composite_key(params[:id])
     end
 
     private
