@@ -40,6 +40,9 @@ BrainzLab.configure do |config|
 
   # Disable SDK Reflex error tracking (we use direct DB inserts)
   config.reflex_enabled = false
+
+  # Ignore internal BrainzLab hosts to prevent infinite recursion
+  config.http_ignore_hosts = %w[localhost 127.0.0.1 recall reflex pulse]
 end
 
 # Middleware to capture request context for self-tracking
