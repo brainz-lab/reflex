@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_21_172112) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_23_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+  enable_extension "timescaledb"
 
-  create_table "error_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "error_events", primary_key: ["id", "occurred_at"], force: :cascade do |t|
     t.jsonb "backtrace", default: []
     t.string "branch"
     t.jsonb "breadcrumbs", default: []
@@ -26,6 +27,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_21_172112) do
     t.string "error_class", null: false
     t.uuid "error_group_id", null: false
     t.jsonb "extra", default: {}
+    t.uuid "id", default: -> { "gen_random_uuid()" }, null: false
     t.text "message"
     t.datetime "occurred_at", null: false
     t.uuid "project_id", null: false
@@ -45,56 +47,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_21_172112) do
     t.index ["context"], name: "index_error_events_on_context", opclass: :jsonb_path_ops, using: :gin
     t.index ["error_group_id", "occurred_at"], name: "index_error_events_on_error_group_id_and_occurred_at"
     t.index ["error_group_id"], name: "index_error_events_on_error_group_id"
+    t.index ["occurred_at"], name: "error_events_occurred_at_idx", order: :desc
     t.index ["project_id", "occurred_at"], name: "index_error_events_on_project_id_and_occurred_at"
     t.index ["project_id"], name: "index_error_events_on_project_id"
     t.index ["request_id"], name: "index_error_events_on_request_id"
     t.index ["tags"], name: "index_error_events_on_tags", opclass: :jsonb_path_ops, using: :gin
     t.index ["user_id"], name: "index_error_events_on_user_id"
   end
-
-  create_table "error_groups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "action"
-    t.string "controller"
-    t.datetime "created_at", null: false
-    t.string "error_class", null: false
-    t.bigint "event_count", default: 0
-    t.string "file_path"
-    t.string "fingerprint", null: false
-    t.datetime "first_seen_at"
-    t.string "function_name"
-    t.string "last_commit"
-    t.string "last_environment"
-    t.datetime "last_notified_at"
-    t.datetime "last_seen_at"
-    t.integer "line_number"
-    t.text "message"
-    t.boolean "notifications_enabled", default: true
-    t.uuid "project_id", null: false
-    t.datetime "resolved_at"
-    t.string "resolved_by"
-    t.string "status", default: "unresolved"
-    t.datetime "updated_at", null: false
-    t.index ["fingerprint"], name: "index_error_groups_on_fingerprint"
-    t.index ["project_id", "error_class"], name: "index_error_groups_on_project_id_and_error_class"
-    t.index ["project_id", "fingerprint"], name: "index_error_groups_on_project_id_and_fingerprint", unique: true
-    t.index ["project_id", "last_seen_at"], name: "index_error_groups_on_project_id_and_last_seen_at"
-    t.index ["project_id", "status"], name: "index_error_groups_on_project_id_and_status"
-    t.index ["project_id"], name: "index_error_groups_on_project_id"
-  end
-
-  create_table "projects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "environment", default: "live"
-    t.bigint "error_count", default: 0
-    t.bigint "event_count", default: 0
-    t.string "name"
-    t.string "platform_project_id", null: false
-    t.jsonb "settings", default: {}
-    t.datetime "updated_at", null: false
-    t.index ["platform_project_id"], name: "index_projects_on_platform_project_id", unique: true
-  end
-
-  add_foreign_key "error_events", "error_groups"
-  add_foreign_key "error_events", "projects"
-  add_foreign_key "error_groups", "projects"
-end

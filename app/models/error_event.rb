@@ -1,4 +1,6 @@
 class ErrorEvent < ApplicationRecord
+  include Timescaledb::Rails::Model
+
   belongs_to :error_group, counter_cache: :event_count
   belongs_to :project, counter_cache: :event_count
 
