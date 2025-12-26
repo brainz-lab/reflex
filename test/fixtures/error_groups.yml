@@ -1,0 +1,29 @@
+one:
+  project: one
+  fingerprint: abc123fingerprint
+  error_class: NoMethodError
+  message: undefined method 'foo' for nil:NilClass
+  file_path: app/models/user.rb
+  line_number: 42
+  function_name: full_name
+  status: unresolved
+  event_count: 3
+  first_seen_at: <%= 1.day.ago %>
+  last_seen_at: <%= 1.hour.ago %>
+  last_commit: abc123
+  last_environment: production
+
+two:
+  project: one
+  fingerprint: xyz789fingerprint
+  error_class: ArgumentError
+  message: wrong number of arguments
+  file_path: app/controllers/users_controller.rb
+  line_number: 23
+  function_name: create
+  status: resolved
+  event_count: 1
+  first_seen_at: <%= 2.days.ago %>
+  last_seen_at: <%= 2.days.ago %>
+  resolved_at: <%= 1.day.ago %>
+  resolved_by: user_123

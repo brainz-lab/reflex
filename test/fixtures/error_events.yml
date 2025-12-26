@@ -1,0 +1,1 @@
+# Error events are generated dynamically in tests due to TimescaleDB hypertable structure

@@ -1,5 +1,8 @@
 class ConvertErrorEventsToHypertable < ActiveRecord::Migration[8.0]
   def up
+    # Check if TimescaleDB is available
+    timescaledb_available = select_value("SELECT COUNT(*) FROM pg_extension WHERE extname = 'timescaledb'").to_i > 0
+
     # TimescaleDB requires the time column to be part of any unique index/primary key
     # We need to drop the primary key and recreate as composite key
 
@@ -8,6 +11,9 @@ class ConvertErrorEventsToHypertable < ActiveRecord::Migration[8.0]
 
     # Create composite primary key with occurred_at
     execute "ALTER TABLE error_events ADD PRIMARY KEY (id, occurred_at);"
+
+    # Only apply TimescaleDB features if extension is available
+    return unless timescaledb_available
 
     # Convert to hypertable
     execute <<-SQL
@@ -37,8 +43,12 @@ class ConvertErrorEventsToHypertable < ActiveRecord::Migration[8.0]
   end
 
   def down
-    execute "SELECT remove_retention_policy('error_events', if_exists => true);"
-    execute "SELECT remove_compression_policy('error_events', if_exists => true);"
-    execute "ALTER TABLE error_events SET (timescaledb.compress = false);"
+    timescaledb_available = select_value("SELECT COUNT(*) FROM pg_extension WHERE extname = 'timescaledb'").to_i > 0
+
+    if timescaledb_available
+      execute "SELECT remove_retention_policy('error_events', if_exists => true);"
+      execute "SELECT remove_compression_policy('error_events', if_exists => true);"
+      execute "ALTER TABLE error_events SET (timescaledb.compress = false);"
+    end
   end
 end

@@ -1,0 +1,13 @@
+one:
+  platform_project_id: prj_test001
+  name: Test Project One
+  environment: live
+  error_count: 5
+  event_count: 10
+
+two:
+  platform_project_id: prj_test002
+  name: Test Project Two
+  environment: test
+  error_count: 0
+  event_count: 0
