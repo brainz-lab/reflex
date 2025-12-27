@@ -1,91 +1,177 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
-  <title>Reflex - Error Tracking</title>
+  <title>Reflex - <%= content_for(:title) || "Error Tracking" %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-  <%= javascript_importmap_tags %>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-cream-50: #FAF9F7;
+      --color-cream-100: #F5F3EF;
+      --color-cream-200: #E8E5E0;
+      --color-ink-900: #1A1A1A;
+      --color-ink-700: #3D3D3D;
+      --color-ink-600: #525252;
+      --color-ink-500: #6B6B6B;
+      --color-ink-400: #8B8780;
+      --color-ink-300: #A8A29E;
+      --color-reflex: #E54D2E;
+      --color-reflex-dark: #C73E22;
+      --color-success: #22C55E;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
 </head>
-<body class="h-full antialiased" style="font-family: 'Inter', system-ui, sans-serif; background: #FAF9F7;">
-  <div class="min-h-full">
-    <!-- Header -->
-    <header class="border-b" style="border-color: #E8E5E0; background: #FFFFFE;">
-      <div class="max-w-5xl mx-auto px-6">
-        <div class="flex h-16 items-center justify-between">
-          <%= link_to dashboard_root_path, class: "flex items-center gap-2.5" do %>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#E54D2E"/>
+<body class="h-full antialiased" style="background: var(--color-cream-50);">
+  <div class="flex h-full">
+    <!-- Sidebar -->
+    <aside class="w-64 border-r flex flex-col" style="border-color: var(--color-cream-200); background: #FFFFFE;">
+      <div class="p-5 border-b" style="border-color: var(--color-cream-100);">
+        <%= link_to dashboard_root_path, class: "flex items-center gap-2.5" do %>
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-reflex);">
+            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L20 12L12 22L4 12L12 2Z"/>
             </svg>
-            <span class="text-[15px] font-semibold tracking-tight" style="color: #1A1A1A;">Reflex</span>
+          </div>
+          <span class="font-semibold" style="color: var(--color-ink-900);">Reflex</span>
+        <% end %>
+      </div>
+
+      <% if @project&.persisted? %>
+        <!-- Project Selector -->
+        <div class="px-4 py-3 border-b" style="border-color: var(--color-cream-100);">
+          <%= link_to dashboard_projects_path, class: "flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[var(--color-cream-100)] transition" do %>
+            <div class="w-6 h-6 rounded flex items-center justify-center text-xs font-semibold" style="background: var(--color-cream-200); color: var(--color-ink-600);">
+              <%= @project.name.first.upcase %>
+            </div>
+            <span class="flex-1 text-sm font-medium truncate" style="color: var(--color-ink-700);"><%= @project.name %></span>
+            <svg class="w-4 h-4" style="color: var(--color-ink-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+            </svg>
+          <% end %>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-4 space-y-1 flex-1">
+          <% errors_active = controller_name == 'errors' %>
+          <%= link_to dashboard_project_errors_path(@project),
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+              style: "#{errors_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            Errors
           <% end %>
 
-          <% if Rails.env.development? && !@project&.persisted? %>
-            <%= link_to dashboard_dev_tools_path, class: "text-[13px] font-medium px-3 py-1.5 rounded-lg transition-colors hover:opacity-80", style: "background: #FEF3C7; color: #92400E;" do %>
+          <% analytics_active = action_name == 'analytics' %>
+          <%= link_to analytics_dashboard_project_path(@project),
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+              style: "#{analytics_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Analytics
+          <% end %>
+
+          <% setup_active = action_name == 'setup' %>
+          <%= link_to setup_dashboard_project_path(@project),
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+              style: "#{setup_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Setup
+          <% end %>
+
+          <% mcp_active = action_name == 'mcp_setup' %>
+          <%= link_to mcp_setup_dashboard_project_path(@project),
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+              style: "#{mcp_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            MCP
+          <% end %>
+
+          <% settings_active = action_name == 'edit' && controller_name == 'projects' %>
+          <%= link_to edit_dashboard_project_path(@project),
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+              style: "#{settings_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Settings
+          <% end %>
+        </nav>
+
+        <% if Rails.env.development? %>
+          <div class="px-4 pb-2">
+            <%= link_to dashboard_dev_tools_path,
+                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
+                style: "background: #FEF3C7; color: #92400E;" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+              </svg>
+              Dev Tools
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <nav class="p-4 flex-1">
+          <p class="px-3 text-xs font-medium uppercase tracking-wider mb-3" style="color: var(--color-ink-400);">Select a project</p>
+          <% if Rails.env.development? %>
+            <%= link_to dashboard_dev_tools_path,
+                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition mt-4",
+                style: "background: #FEF3C7; color: #92400E;" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+              </svg>
               Dev Tools
             <% end %>
           <% end %>
+        </nav>
+      <% end %>
 
-          <% if @project&.persisted? %>
-            <div class="flex items-center gap-6">
-              <div class="flex items-center gap-3">
-                <span style="color: #C4C0B8;">/</span>
-                <%= link_to @project.name, dashboard_project_errors_path(@project), class: "text-[14px] hover:underline", style: "color: #6B6760;" %>
-              </div>
-              <div class="flex items-center gap-4">
-                <% errors_active = controller_name == 'errors' %>
-                <% analytics_active = action_name == 'analytics' %>
-                <% setup_active = action_name == 'setup' %>
-                <% mcp_setup_active = action_name == 'mcp_setup' %>
-                <% settings_active = action_name == 'edit' && controller_name == 'projects' %>
-                <%= link_to dashboard_project_errors_path(@project), class: "text-[13px] font-medium transition-colors", style: errors_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
-                  Errors
-                <% end %>
-                <%= link_to analytics_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: analytics_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
-                  Analytics
-                <% end %>
-                <%= link_to setup_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: setup_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
-                  Setup
-                <% end %>
-                <%= link_to mcp_setup_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: mcp_setup_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
-                  MCP
-                <% end %>
-                <%= link_to edit_dashboard_project_path(@project), class: "text-[13px] font-medium transition-colors", style: settings_active ? "color: #1A1A1A;" : "color: #8B8780;" do %>
-                  Settings
-                <% end %>
-              </div>
-              <%= link_to dashboard_projects_path, class: "text-[13px] font-medium px-3 py-1.5 rounded-lg transition-colors hover:opacity-80", style: "background: #F0EFED; color: #6B6760;" do %>
-                Projects
-              <% end %>
-              <% if Rails.env.development? %>
-                <%= link_to dashboard_dev_tools_path, class: "text-[13px] font-medium px-3 py-1.5 rounded-lg transition-colors hover:opacity-80", style: "background: #FEF3C7; color: #92400E;" do %>
-                  Dev Tools
-                <% end %>
-              <% end %>
+      <!-- User Menu -->
+      <% if defined?(current_user) && current_user %>
+        <div class="p-4 border-t" style="border-color: var(--color-cream-100);">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background: rgba(229, 77, 46, 0.15); color: var(--color-reflex);">
+              <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
             </div>
-          <% end %>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate" style="color: var(--color-ink-900);"><%= current_user.name || current_user.email.split('@').first %></p>
+              <p class="text-xs truncate" style="color: var(--color-ink-500);"><%= current_user.email %></p>
+            </div>
+          </div>
         </div>
-      </div>
-    </header>
+      <% end %>
+    </aside>
 
-    <!-- Main -->
-    <main class="max-w-5xl mx-auto px-6 py-10">
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
       <% if flash[:notice] %>
-        <div class="mb-6 px-4 py-3 rounded-lg text-[14px]" style="background: #E8F5E8; color: #2D5A2D;">
+        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-sm font-medium" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #166534;">
           <%= flash[:notice] %>
         </div>
       <% end %>
       <% if flash[:alert] %>
-        <div class="mb-6 px-4 py-3 rounded-lg text-[14px]" style="background: #FEE8E8; color: #8B2D2D;">
+        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-sm font-medium" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #991B1B;">
           <%= flash[:alert] %>
         </div>
       <% end %>
-      <%= yield %>
+
+      <div class="p-8">
+        <%= yield %>
+      </div>
     </main>
   </div>
 </body>
