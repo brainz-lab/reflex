@@ -79,7 +79,106 @@ module Api
         }
       end
 
+      # Signal integration: Query errors with aggregation for alerting
+      def query
+        error_type = params[:error_type] || 'all'
+        aggregation = params[:aggregation] || 'count'
+        window = parse_window(params[:window] || '5m')
+        query_filters = JSON.parse(params[:query] || '{}')
+
+        scope = current_project.error_events.where('occurred_at >= ?', window.ago)
+
+        # Filter by error type
+        scope = scope.where(error_class: error_type) unless error_type == 'all'
+
+        # Apply additional query filters
+        query_filters.each do |key, value|
+          case key
+          when 'environment' then scope = scope.where(environment: value)
+          when 'status' then scope = scope.joins(:error_group).where(error_groups: { status: value })
+          end
+        end
+
+        value = case aggregation
+                when 'count' then scope.count
+                when 'rate'
+                  # Errors per minute
+                  count = scope.count
+                  minutes = (window / 60.0).to_f
+                  minutes > 0 ? (count / minutes).round(2) : 0
+                else
+                  scope.count
+                end
+
+        render json: { value: value, error_type: error_type, window: params[:window] }
+      end
+
+      # Signal integration: Get baseline for anomaly detection
+      def baseline
+        error_type = params[:error_type] || 'all'
+        window = parse_window(params[:window] || '24h')
+
+        scope = current_project.error_events.where('occurred_at >= ?', window.ago)
+        scope = scope.where(error_class: error_type) unless error_type == 'all'
+
+        # Get hourly counts for the baseline window
+        hourly_counts = scope.group("date_trunc('hour', occurred_at)")
+                             .count
+                             .values
+
+        if hourly_counts.empty?
+          render json: { mean: 0, stddev: 1 }
+        else
+          mean = hourly_counts.sum.to_f / hourly_counts.size
+          variance = hourly_counts.map { |c| (c - mean)**2 }.sum / hourly_counts.size
+          stddev = Math.sqrt(variance)
+
+          render json: { mean: mean, stddev: [stddev, 1].max }
+        end
+      end
+
+      # Signal integration: Get last error for absence detection
+      def last
+        error_type = params[:error_type] || 'all'
+        query_filters = JSON.parse(params[:query] || '{}')
+
+        scope = current_project.error_events
+        scope = scope.where(error_class: error_type) unless error_type == 'all'
+
+        query_filters.each do |key, value|
+          case key
+          when 'environment' then scope = scope.where(environment: value)
+          end
+        end
+
+        last_event = scope.order(occurred_at: :desc).first
+
+        if last_event
+          render json: {
+            timestamp: last_event.occurred_at.iso8601,
+            value: 1,
+            error_class: last_event.error_class,
+            message: last_event.message
+          }
+        else
+          render json: { timestamp: nil, value: nil }
+        end
+      end
+
       private
+
+      def parse_window(window_str)
+        match = window_str&.match(/^(\d+)(m|h|d)$/)
+        return 5.minutes unless match
+
+        value = match[1].to_i
+        case match[2]
+        when 'm' then value.minutes
+        when 'h' then value.hours
+        when 'd' then value.days
+        else 5.minutes
+        end
+      end
 
       def serialize_error(error)
         {

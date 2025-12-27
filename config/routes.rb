@@ -21,6 +21,12 @@ Rails.application.routes.draw do
           post :unresolve
           get :events
         end
+        collection do
+          # Signal integration endpoints
+          get :query
+          get :baseline
+          get :last
+        end
       end
     end
   end
