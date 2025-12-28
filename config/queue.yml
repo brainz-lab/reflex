@@ -2,17 +2,34 @@ default: &default
   dispatchers:
     - polling_interval: 1
       batch_size: 500
-  workers:
-    - queues: "*"
-      threads: 3
-      processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
-      polling_interval: 0.1
 
 development:
   <<: *default
+  workers:
+    - queues: "*"
+      threads: 3
+      processes: 1
+      polling_interval: 0.1
 
 test:
   <<: *default
+  workers:
+    - queues: "*"
+      threads: 3
+      processes: 1
+      polling_interval: 0.1
 
 production:
   <<: *default
+  workers:
+    # High priority - error processing
+    - queues: [default]
+      threads: <%= ENV.fetch("DEFAULT_WORKER_THREADS", 5) %>
+      processes: <%= ENV.fetch("DEFAULT_WORKER_PROCESSES", 2) %>
+      polling_interval: 0.1
+
+    # Notifications - separate pool
+    - queues: [notifications]
+      threads: <%= ENV.fetch("NOTIFICATION_WORKER_THREADS", 3) %>
+      processes: <%= ENV.fetch("NOTIFICATION_WORKER_PROCESSES", 1) %>
+      polling_interval: 0.5

@@ -11,114 +11,138 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --color-cream-50: #FAF9F7;
-      --color-cream-100: #F5F3EF;
-      --color-cream-200: #E8E5E0;
-      --color-ink-900: #1A1A1A;
-      --color-ink-700: #3D3D3D;
-      --color-ink-600: #525252;
-      --color-ink-500: #6B6B6B;
-      --color-ink-400: #8B8780;
-      --color-ink-300: #A8A29E;
-      --color-reflex: #E54D2E;
-      --color-reflex-dark: #C73E22;
-      --color-success: #22C55E;
-      --color-warning: #F59E0B;
-      --color-error: #EF4444;
+      /* Anthropic/Claude-inspired color palette */
+      --color-cream-50: #FDFCFA;
+      --color-cream-100: #F9F7F4;
+      --color-cream-200: #F0EDE8;
+      --color-cream-300: #E5E0D8;
+      --color-ink-900: #1C1917;
+      --color-ink-800: #292524;
+      --color-ink-700: #44403C;
+      --color-ink-600: #57534E;
+      --color-ink-500: #78716C;
+      --color-ink-400: #A8A29E;
+      --color-ink-300: #D6D3D1;
+      /* Anthropic orange accent */
+      --color-reflex: #D97706;
+      --color-reflex-light: #F59E0B;
+      --color-reflex-dark: #B45309;
+      --color-reflex-bg: #FEF3C7;
+      --color-reflex-bg-subtle: #FFFBEB;
+      /* Semantic colors */
+      --color-success: #059669;
+      --color-success-bg: #D1FAE5;
+      --color-warning: #D97706;
+      --color-warning-bg: #FEF3C7;
+      --color-error: #DC2626;
+      --color-error-bg: #FEE2E2;
     }
-    body { font-family: 'Inter', system-ui, sans-serif; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    /* Smooth transitions */
+    a, button { transition: all 0.15s ease; }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-cream-100); }
+    ::-webkit-scrollbar-thumb { background: var(--color-cream-300); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-ink-400); }
+    /* Focus states */
+    :focus-visible { outline: 2px solid var(--color-reflex); outline-offset: 2px; }
   </style>
 </head>
 <body class="h-full antialiased" style="background: var(--color-cream-50);">
   <div class="flex h-full">
     <!-- Sidebar -->
-    <aside class="w-64 border-r flex flex-col" style="border-color: var(--color-cream-200); background: #FFFFFE;">
-      <div class="p-5 border-b" style="border-color: var(--color-cream-100);">
-        <%= link_to dashboard_root_path, class: "flex items-center gap-2.5" do %>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-reflex);">
+    <aside class="w-64 border-r flex flex-col" style="border-color: var(--color-cream-200); background: linear-gradient(180deg, #FFFFFF 0%, var(--color-cream-50) 100%);">
+      <div class="p-5 border-b" style="border-color: var(--color-cream-200);">
+        <%= link_to dashboard_root_path, class: "flex items-center gap-2.5 group" do %>
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%);">
             <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2L20 12L12 22L4 12L12 2Z"/>
             </svg>
           </div>
-          <span class="font-semibold" style="color: var(--color-ink-900);">Reflex</span>
+          <span class="text-[17px] font-semibold tracking-tight" style="color: var(--color-ink-900);">Reflex</span>
         <% end %>
       </div>
 
       <% if @project&.persisted? %>
         <!-- Project Selector -->
-        <div class="px-4 py-3 border-b" style="border-color: var(--color-cream-100);">
-          <%= link_to dashboard_projects_path, class: "flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[var(--color-cream-100)] transition" do %>
-            <div class="w-6 h-6 rounded flex items-center justify-center text-xs font-semibold" style="background: var(--color-cream-200); color: var(--color-ink-600);">
+        <div class="px-4 py-3 border-b" style="border-color: var(--color-cream-200);">
+          <%= link_to dashboard_projects_path, class: "flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-[var(--color-cream-100)] transition group" do %>
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%); color: var(--color-reflex-dark);">
               <%= @project.name.first.upcase %>
             </div>
-            <span class="flex-1 text-sm font-medium truncate" style="color: var(--color-ink-700);"><%= @project.name %></span>
-            <svg class="w-4 h-4" style="color: var(--color-ink-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+            <span class="flex-1 text-[13px] font-semibold truncate" style="color: var(--color-ink-800);"><%= @project.name %></span>
+            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100" style="color: var(--color-ink-500);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
             </svg>
           <% end %>
         </div>
 
         <!-- Navigation -->
-        <nav class="p-4 space-y-1 flex-1">
+        <nav class="p-3 space-y-0.5 flex-1">
           <% errors_active = controller_name == 'errors' %>
           <%= link_to dashboard_project_errors_path(@project),
-              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-              style: "#{errors_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+              style: "#{errors_active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark); box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
             Errors
           <% end %>
 
           <% analytics_active = action_name == 'analytics' %>
           <%= link_to analytics_dashboard_project_path(@project),
-              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-              style: "#{analytics_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+              style: "#{analytics_active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark); box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
             Analytics
           <% end %>
 
           <% setup_active = action_name == 'setup' %>
           <%= link_to setup_dashboard_project_path(@project),
-              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-              style: "#{setup_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+              style: "#{setup_active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark); box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             Setup
           <% end %>
 
           <% mcp_active = action_name == 'mcp_setup' %>
           <%= link_to mcp_setup_dashboard_project_path(@project),
-              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-              style: "#{mcp_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+              style: "#{mcp_active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark); box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
             MCP
           <% end %>
 
           <% settings_active = action_name == 'edit' && controller_name == 'projects' %>
           <%= link_to edit_dashboard_project_path(@project),
-              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-              style: "#{settings_active ? 'background: rgba(229, 77, 46, 0.1); color: var(--color-reflex);' : 'color: var(--color-ink-600);'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+              style: "#{settings_active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark); box-shadow: 0 1px 2px rgba(217, 119, 6, 0.1);' : 'color: var(--color-ink-600);'}" do %>
+            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
             Settings
           <% end %>
         </nav>
 
         <% if Rails.env.development? %>
-          <div class="px-4 pb-2">
+          <div class="px-3 pb-3">
             <%= link_to dashboard_dev_tools_path,
-                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition",
-                style: "background: #FEF3C7; color: #92400E;" do %>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+                style: "background: var(--color-warning-bg); color: var(--color-reflex-dark);" do %>
+              <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
               </svg>
               Dev Tools
             <% end %>
@@ -126,13 +150,13 @@
         <% end %>
       <% else %>
         <nav class="p-4 flex-1">
-          <p class="px-3 text-xs font-medium uppercase tracking-wider mb-3" style="color: var(--color-ink-400);">Select a project</p>
+          <p class="px-3 text-[11px] font-semibold uppercase tracking-wider mb-3" style="color: var(--color-ink-400);">Select a project</p>
           <% if Rails.env.development? %>
             <%= link_to dashboard_dev_tools_path,
-                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition mt-4",
-                style: "background: #FEF3C7; color: #92400E;" do %>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                class: "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all mt-4",
+                style: "background: var(--color-warning-bg); color: var(--color-reflex-dark);" do %>
+              <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
               </svg>
               Dev Tools
             <% end %>
@@ -142,14 +166,14 @@
 
       <!-- User Menu -->
       <% if defined?(current_user) && current_user %>
-        <div class="p-4 border-t" style="border-color: var(--color-cream-100);">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background: rgba(229, 77, 46, 0.15); color: var(--color-reflex);">
+        <div class="p-4 border-t" style="border-color: var(--color-cream-200);">
+          <div class="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-[var(--color-cream-100)] transition cursor-pointer">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold shadow-sm" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%); color: var(--color-reflex-dark);">
               <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium truncate" style="color: var(--color-ink-900);"><%= current_user.name || current_user.email.split('@').first %></p>
-              <p class="text-xs truncate" style="color: var(--color-ink-500);"><%= current_user.email %></p>
+              <p class="text-[13px] font-semibold truncate" style="color: var(--color-ink-800);"><%= current_user.name || current_user.email.split('@').first %></p>
+              <p class="text-[11px] truncate" style="color: var(--color-ink-500);"><%= current_user.email %></p>
             </div>
           </div>
         </div>
@@ -157,14 +181,20 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-auto">
+    <main class="flex-1 overflow-auto" style="background: linear-gradient(180deg, var(--color-cream-50) 0%, var(--color-cream-100) 100%);">
       <% if flash[:notice] %>
-        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-sm font-medium" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #166534;">
+        <div class="mx-8 mt-8 mb-0 px-4 py-3 rounded-xl text-[13px] font-medium flex items-center gap-3 shadow-sm" style="background: var(--color-success-bg); border: 1px solid #A7F3D0; color: #065F46;">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
           <%= flash[:notice] %>
         </div>
       <% end %>
       <% if flash[:alert] %>
-        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-sm font-medium" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #991B1B;">
+        <div class="mx-8 mt-8 mb-0 px-4 py-3 rounded-xl text-[13px] font-medium flex items-center gap-3 shadow-sm" style="background: var(--color-error-bg); border: 1px solid #FECACA; color: #991B1B;">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
           <%= flash[:alert] %>
         </div>
       <% end %>

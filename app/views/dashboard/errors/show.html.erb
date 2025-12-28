@@ -1,8 +1,8 @@
-<div class="space-y-8">
+<div class="space-y-6">
   <!-- Back link -->
   <div>
-    <%= link_to dashboard_project_errors_path(@project), class: "inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-70", style: "color: #8B8780;" do %>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <%= link_to dashboard_project_errors_path(@project), class: "inline-flex items-center gap-2 text-[13px] font-medium transition-all hover:gap-3 group", style: "color: var(--color-ink-500);" do %>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="transition-transform group-hover:-translate-x-0.5">
         <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       Back to errors
@@ -10,22 +10,22 @@
   </div>
 
   <!-- Header -->
-  <div class="flex justify-between items-start">
-    <div>
-      <div class="flex items-center gap-3 mb-2">
-        <span class="px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide rounded-full"
-              style="<%= @error.status == 'unresolved' ? 'background: #FEEBE7; color: #CD2B31;' : @error.status == 'resolved' ? 'background: #DDF3E4; color: #18794E;' : 'background: #F0EFED; color: #6B6760;' %>">
+  <div class="flex justify-between items-start gap-6">
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide rounded-full"
+              style="<%= @error.status == 'unresolved' ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark);' : @error.status == 'resolved' ? 'background: var(--color-success-bg); color: var(--color-success);' : 'background: var(--color-cream-200); color: var(--color-ink-500);' %>">
           <%= @error.status %>
         </span>
       </div>
-      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #E54D2E;"><%= @error.error_class %></h1>
-      <p class="text-[15px] mt-2" style="color: #6B6760;"><%= @error.message %></p>
+      <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-reflex);"><%= @error.error_class %></h1>
+      <p class="text-[15px] mt-2.5 leading-relaxed" style="color: var(--color-ink-600);"><%= @error.message %></p>
       <% if @error.location %>
-        <p class="text-[13px] mt-2 font-mono" style="color: #A19F9A;"><%= @error.location %></p>
+        <p class="text-[13px] mt-3 font-mono px-3 py-1.5 rounded-lg inline-block" style="background: var(--color-cream-100); color: var(--color-ink-500);"><%= @error.location %></p>
       <% end %>
     </div>
 
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-shrink-0">
       <% if @selected_event %>
         <div data-controller="copy-error"
              data-copy-error-error-class-value="<%= @error.error_class %>"
@@ -39,8 +39,8 @@
              data-copy-error-environment-value="<%= @selected_event.environment %>"
              data-copy-error-commit-value="<%= @selected_event.commit %>">
           <button type="button" data-action="click->copy-error#copy"
-                  class="px-4 py-2 text-[13px] font-medium rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap"
-                  style="background: #7C3AED; color: #FFFFFE;">
+                  class="px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md flex items-center gap-2 whitespace-nowrap"
+                  style="background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); color: white;">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M13.3333 6H7.33333C6.59695 6 6 6.59695 6 7.33333V13.3333C6 14.0697 6.59695 14.6667 7.33333 14.6667H13.3333C14.0697 14.6667 14.6667 14.0697 14.6667 13.3333V7.33333C14.6667 6.59695 14.0697 6 13.3333 6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M3.33333 10H2.66667C2.31304 10 1.97391 9.85953 1.72386 9.60948C1.47381 9.35943 1.33333 9.0203 1.33333 8.66667V2.66667C1.33333 2.31304 1.47381 1.97391 1.72386 1.72386C1.97391 1.47381 2.31304 1.33333 2.66667 1.33333H8.66667C9.0203 1.33333 9.35943 1.47381 9.60948 1.72386C9.85953 1.97391 10 2.31304 10 2.66667V3.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -52,46 +52,46 @@
       <% if @error.status == 'unresolved' %>
         <%= button_to 'Resolve', resolve_dashboard_project_error_path(@project, @error),
             method: :post,
-            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
-            style: "background: #30A46C; color: #FFFFFE;" %>
+            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
+            style: "background: linear-gradient(135deg, var(--color-success) 0%, #047857 100%); color: white;" %>
         <%= button_to 'Ignore', ignore_dashboard_project_error_path(@project, @error),
             method: :post,
-            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
-            style: "background: #F0EFED; color: #6B6760;" %>
+            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all",
+            style: "background: var(--color-cream-100); color: var(--color-ink-600);" %>
       <% else %>
         <%= button_to 'Unresolve', unresolve_dashboard_project_error_path(@project, @error),
             method: :post,
-            class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
-            style: "background: #F0EFED; color: #6B6760;" %>
+            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all",
+            style: "background: var(--color-cream-100); color: var(--color-ink-600);" %>
       <% end %>
     </div>
   </div>
 
   <!-- Stats -->
   <div class="grid grid-cols-4 gap-4">
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Events</p>
-      <p class="text-[24px] font-semibold mt-1" style="color: #1A1A1A;"><%= @error.event_count %></p>
+    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Events</p>
+      <p class="text-[26px] font-bold mt-1.5 tabular-nums" style="color: var(--color-ink-900);"><%= @error.event_count %></p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">First seen</p>
-      <p class="text-[15px] font-medium mt-1" style="color: #1A1A1A;"><%= @error.first_seen_at&.strftime('%b %d, %H:%M') || '-' %></p>
+    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">First seen</p>
+      <p class="text-[15px] font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.first_seen_at&.strftime('%b %d, %H:%M') || '-' %></p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Last seen</p>
-      <p class="text-[15px] font-medium mt-1" style="color: #1A1A1A;"><%= @error.last_seen_at ? "#{time_ago_in_words(@error.last_seen_at)} ago" : '-' %></p>
+    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Last seen</p>
+      <p class="text-[15px] font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.last_seen_at ? "#{time_ago_in_words(@error.last_seen_at)} ago" : '-' %></p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Commit</p>
-      <p class="text-[15px] font-mono mt-1" style="color: #1A1A1A;"><%= @error.last_commit&.slice(0, 7) || '—' %></p>
+    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Commit</p>
+      <p class="text-[15px] font-mono font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.last_commit&.slice(0, 7) || '—' %></p>
     </div>
   </div>
 
   <!-- Event Viewer -->
-  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-    <div class="px-5 py-4 flex items-center justify-between" style="border-bottom: 1px solid #F0EFED;">
-      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">
-        Event <span style="color: #8B8780;"><%= @current_index + 1 %> of <%= @event_ids.length %></span>
+  <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom: 1px solid var(--color-cream-200);">
+      <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">
+        Event <span class="font-normal" style="color: var(--color-ink-400);"><%= @current_index + 1 %> of <%= @event_ids.length %></span>
       </h2>
 
       <!-- Event Navigation -->
@@ -163,11 +163,11 @@
     </div>
 
     <% if @selected_event %>
-      <div class="p-5">
+      <div class="p-6">
         <!-- Backtrace -->
         <% if @selected_event.app_backtrace.any? %>
-          <div class="rounded-lg overflow-hidden" style="background: #1A1A1A;">
-            <pre class="p-4 text-[13px] font-mono overflow-x-auto" style="color: #E8E5E0;"><% @selected_event.app_backtrace.each do |frame| %><span style="color: #8B8780;"><%= frame[:file] %><%= ":#{frame[:line]}" if frame[:line] %></span><%= " in " if frame[:function] %><span style="color: #E54D2E;"><%= frame[:function] %></span>
+          <div class="rounded-xl overflow-hidden" style="background: var(--color-ink-900);">
+            <pre class="p-5 text-[13px] font-mono overflow-x-auto leading-relaxed" style="color: var(--color-cream-200);"><% @selected_event.app_backtrace.each do |frame| %><span style="color: var(--color-ink-400);"><%= frame[:file] %><%= ":#{frame[:line]}" if frame[:line] %></span><%= " in " if frame[:function] %><span style="color: var(--color-reflex-light);"><%= frame[:function] %></span>
 <% end %></pre>
           </div>
         <% end %>
@@ -313,29 +313,29 @@
   </div>
 
   <!-- Event History -->
-  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-    <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-      <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Recent events</h2>
+  <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+    <div class="px-6 py-4" style="border-bottom: 1px solid var(--color-cream-200);">
+      <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">Recent events</h2>
     </div>
 
     <% if @events.any? %>
       <% @events.each_with_index do |event, index| %>
         <% is_selected = event.id == @selected_event&.id %>
         <%= link_to dashboard_project_error_path(@project, @error, event_id: event.id),
-            class: "flex items-center gap-4 px-5 py-3 text-[13px] transition-colors hover:bg-gray-50",
-            style: "#{index < @events.size - 1 ? 'border-bottom: 1px solid #F0EFED;' : ''} #{is_selected ? 'background: #FEF8F7;' : ''}" do %>
-          <span style="color: #8B8780;"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
-          <span class="px-2 py-0.5 rounded text-[11px] font-medium" style="background: #F0EFED; color: #6B6760;"><%= event.environment || 'unknown' %></span>
-          <span class="font-mono text-[12px]" style="color: #A19F9A;"><%= event.commit&.slice(0, 7) %></span>
-          <span style="color: #6B6760;"><%= event.user_id || 'anonymous' %></span>
-          <span class="truncate" style="color: #A19F9A;"><%= event.request_path %></span>
+            class: "flex items-center gap-4 px-6 py-3.5 text-[13px] transition-all hover:bg-[var(--color-cream-50)] group",
+            style: "#{index < @events.size - 1 ? 'border-bottom: 1px solid var(--color-cream-200);' : ''} #{is_selected ? 'background: var(--color-reflex-bg-subtle);' : ''}" do %>
+          <span class="font-medium" style="color: var(--color-ink-500);"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
+          <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold" style="background: var(--color-cream-100); color: var(--color-ink-500);"><%= event.environment || 'unknown' %></span>
+          <span class="font-mono text-[12px]" style="color: var(--color-ink-400);"><%= event.commit&.slice(0, 7) %></span>
+          <span style="color: var(--color-ink-600);"><%= event.user_id || 'anonymous' %></span>
+          <span class="truncate" style="color: var(--color-ink-400);"><%= event.request_path %></span>
           <% if is_selected %>
-            <span class="ml-auto text-[11px] font-medium" style="color: #E54D2E;">viewing</span>
+            <span class="ml-auto text-[11px] font-bold px-2 py-0.5 rounded-md" style="background: var(--color-reflex-bg); color: var(--color-reflex-dark);">viewing</span>
           <% end %>
         <% end %>
       <% end %>
     <% else %>
-      <div class="p-5 text-[14px]" style="color: #8B8780;">No events recorded yet.</div>
+      <div class="p-6 text-[14px]" style="color: var(--color-ink-500);">No events recorded yet.</div>
     <% end %>
   </div>
 </div>

@@ -2,13 +2,16 @@
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Projects</h1>
-      <p class="text-[14px] mt-1" style="color: #8B8780;">Select a project to view errors</p>
+      <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-ink-900);">Projects</h1>
+      <p class="text-[14px] mt-1.5" style="color: var(--color-ink-500);">Select a project to view errors</p>
     </div>
     <%= link_to new_dashboard_project_path,
-        class: "px-4 py-2 text-[14px] font-medium rounded-lg transition-colors hover:opacity-90",
-        style: "background: #1A1A1A; color: #FFFFFE;" do %>
-      + New Project
+        class: "inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
+        style: "background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%); color: white;" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      New Project
     <% end %>
   </div>
 
@@ -17,63 +20,75 @@
     <div class="grid gap-4">
       <% @projects.each do |project| %>
         <%= link_to dashboard_project_errors_path(project),
-            class: "block rounded-xl p-5 transition-all hover:shadow-md",
-            style: "background: #FFFFFE; border: 1px solid #E8E5E0;" do %>
+            class: "block rounded-2xl p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 group",
+            style: "background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);" do %>
           <div class="flex items-start justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #FEEBE7;">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#E54D2E"/>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%);">
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="var(--color-reflex)"/>
                 </svg>
               </div>
               <div>
-                <h3 class="text-[15px] font-semibold" style="color: #1A1A1A;"><%= project.name %></h3>
-                <p class="text-[13px] mt-0.5" style="color: #8B8780;">
+                <h3 class="text-[16px] font-semibold" style="color: var(--color-ink-900);"><%= project.name %></h3>
+                <p class="text-[13px] mt-0.5 font-medium" style="color: var(--color-ink-500);">
                   <%= project.environment || 'development' %>
                 </p>
               </div>
             </div>
 
             <div class="text-right">
-              <% unresolved_count = project.error_groups.unresolved.count %>
+              <% unresolved_count = @unresolved_counts[project.id] || 0 %>
               <% if unresolved_count > 0 %>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium"
-                      style="background: #FEEBE7; color: #CD2B31;">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold shadow-sm"
+                      style="background: var(--color-error-bg); color: var(--color-error);">
+                  <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--color-error);"></span>
                   <%= unresolved_count %> unresolved
                 </span>
               <% else %>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium"
-                      style="background: #DDF3E4; color: #18794E;">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                      style="background: var(--color-success-bg); color: var(--color-success);">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
                   All clear
                 </span>
               <% end %>
             </div>
           </div>
 
-          <div class="flex items-center gap-4 mt-4 text-[13px]" style="color: #8B8780;">
-            <span><%= project.error_groups.count %> errors</span>
-            <span>&middot;</span>
-            <span><%= project.error_events.count %> events</span>
-            <% if project.error_events.exists? %>
-              <span>&middot;</span>
-              <span>Last event <%= time_ago_in_words(project.error_events.maximum(:occurred_at)) %> ago</span>
+          <div class="flex items-center gap-4 mt-5 text-[13px] font-medium" style="color: var(--color-ink-400);">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              <%= @error_group_counts[project.id] || 0 %> errors
+            </span>
+            <span style="color: var(--color-cream-300);">|</span>
+            <span><%= @error_event_counts[project.id] || 0 %> events</span>
+            <% if @last_event_times[project.id] %>
+              <span style="color: var(--color-cream-300);">|</span>
+              <span>Last event <%= time_ago_in_words(@last_event_times[project.id]) %> ago</span>
             <% end %>
           </div>
         <% end %>
       <% end %>
     </div>
   <% else %>
-    <div class="rounded-xl px-6 py-16 text-center" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4" style="background: #F0EFED;">
-        <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
-          <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="#C4C0B8"/>
+    <div class="rounded-2xl px-8 py-20 text-center" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-sm" style="background: linear-gradient(135deg, var(--color-cream-100) 0%, var(--color-cream-200) 100%);">
+        <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="var(--color-ink-300)"/>
         </svg>
       </div>
-      <p class="text-[15px] font-medium" style="color: #1A1A1A;">No projects yet</p>
-      <p class="text-[14px] mt-1" style="color: #8B8780;">Create your first project to start tracking errors</p>
+      <p class="text-[17px] font-semibold" style="color: var(--color-ink-900);">No projects yet</p>
+      <p class="text-[14px] mt-2 max-w-sm mx-auto" style="color: var(--color-ink-500);">Create your first project to start tracking errors and getting insights</p>
       <%= link_to new_dashboard_project_path,
-          class: "inline-block mt-4 px-4 py-2 text-[14px] font-medium rounded-lg transition-colors hover:opacity-90",
-          style: "background: #1A1A1A; color: #FFFFFE;" do %>
+          class: "inline-flex items-center gap-2 mt-6 px-5 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
+          style: "background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%); color: white;" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
         Create Project
       <% end %>
     </div>

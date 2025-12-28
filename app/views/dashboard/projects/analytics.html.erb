@@ -1,18 +1,18 @@
-<div class="space-y-8">
+<div class="space-y-6">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Analytics</h1>
-      <p class="text-[14px] mt-1" style="color: #8B8780;">Error trends and insights</p>
+      <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-ink-900);">Analytics</h1>
+      <p class="text-[14px] mt-1.5" style="color: var(--color-ink-500);">Error trends and insights</p>
     </div>
 
     <!-- Period selector -->
-    <div class="flex gap-1 p-1 rounded-lg" style="background: #F0EFED;">
+    <div class="flex gap-1 p-1 rounded-xl" style="background: var(--color-cream-100);">
       <% %w[24h 7d 30d 90d].each do |period| %>
         <% active = @period == period %>
         <%= link_to analytics_dashboard_project_path(@project, period: period),
-            class: "px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors",
-            style: active ? "background: #FFFFFE; color: #1A1A1A; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" : "color: #6B6760;" do %>
+            class: "px-4 py-2 text-[13px] font-semibold rounded-lg transition-all",
+            style: active ? "background: white; color: var(--color-ink-900); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" : "color: var(--color-ink-500);" do %>
           <%= period %>
         <% end %>
       <% end %>
@@ -21,36 +21,36 @@
 
   <!-- Overview Stats -->
   <div class="grid grid-cols-4 gap-4">
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Events</p>
-      <p class="text-[28px] font-semibold mt-1" style="color: #1A1A1A;"><%= number_with_delimiter(@stats[:events_in_period]) %></p>
-      <p class="text-[12px] mt-1" style="color: #8B8780;">in last <%= @period %></p>
+    <div class="rounded-2xl px-5 py-5" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Events</p>
+      <p class="text-[28px] font-bold mt-2 tabular-nums" style="color: var(--color-ink-900);"><%= number_with_delimiter(@stats[:events_in_period]) %></p>
+      <p class="text-[12px] mt-1 font-medium" style="color: var(--color-ink-400);">in last <%= @period %></p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Unresolved</p>
-      <p class="text-[28px] font-semibold mt-1" style="color: #E54D2E;"><%= @stats[:unresolved] %></p>
-      <p class="text-[12px] mt-1" style="color: #8B8780;">errors need attention</p>
+    <div class="rounded-2xl px-5 py-5" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Unresolved</p>
+      <p class="text-[28px] font-bold mt-2 tabular-nums" style="color: var(--color-reflex);"><%= @stats[:unresolved] %></p>
+      <p class="text-[12px] mt-1 font-medium" style="color: var(--color-ink-400);">errors need attention</p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Resolved</p>
-      <p class="text-[28px] font-semibold mt-1" style="color: #30A46C;"><%= @stats[:resolved] %></p>
-      <p class="text-[12px] mt-1" style="color: #8B8780;">errors fixed</p>
+    <div class="rounded-2xl px-5 py-5" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Resolved</p>
+      <p class="text-[28px] font-bold mt-2 tabular-nums" style="color: var(--color-success);"><%= @stats[:resolved] %></p>
+      <p class="text-[12px] mt-1 font-medium" style="color: var(--color-ink-400);">errors fixed</p>
     </div>
-    <div class="rounded-xl px-5 py-4" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <p class="text-[12px] font-medium uppercase tracking-wide" style="color: #A19F9A;">Total Errors</p>
-      <p class="text-[28px] font-semibold mt-1" style="color: #1A1A1A;"><%= @stats[:total_errors] %></p>
-      <p class="text-[12px] mt-1" style="color: #8B8780;">unique error types</p>
+    <div class="rounded-2xl px-5 py-5" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Total Errors</p>
+      <p class="text-[28px] font-bold mt-2 tabular-nums" style="color: var(--color-ink-900);"><%= @stats[:total_errors] %></p>
+      <p class="text-[12px] mt-1 font-medium" style="color: var(--color-ink-400);">unique error types</p>
     </div>
   </div>
 
   <!-- Charts Row -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Events Over Time Chart -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Events over time</h2>
+    <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <div class="px-6 py-4" style="border-bottom: 1px solid var(--color-cream-200);">
+        <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">Events over time</h2>
       </div>
-      <div class="p-5">
+      <div class="p-6">
         <div class="h-64">
           <canvas id="eventsChart"></canvas>
         </div>
@@ -58,11 +58,11 @@
     </div>
 
     <!-- Errors by Class -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Errors by class</h2>
+    <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+      <div class="px-6 py-4" style="border-bottom: 1px solid var(--color-cream-200);">
+        <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">Errors by class</h2>
       </div>
-      <div class="p-5">
+      <div class="p-6">
         <div class="h-64">
           <canvas id="errorsByClassChart"></canvas>
         </div>
@@ -433,14 +433,16 @@
           labels: eventsData.map(d => d.date),
           datasets: [{
             data: eventsData.map(d => d.count),
-            borderColor: '#E54D2E',
-            backgroundColor: 'rgba(229, 77, 46, 0.1)',
+            borderColor: '#D97706',
+            backgroundColor: 'rgba(217, 119, 6, 0.1)',
             borderWidth: 2,
             fill: true,
-            tension: 0.3,
-            pointRadius: 3,
-            pointHoverRadius: 5,
-            pointBackgroundColor: '#E54D2E'
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#D97706',
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 2
           }]
         },
         options: commonOptions
@@ -455,8 +457,8 @@
           labels: errorsByClass.map(d => d.error_class),
           datasets: [{
             data: errorsByClass.map(d => d.count),
-            backgroundColor: '#E54D2E',
-            borderRadius: 4
+            backgroundColor: '#D97706',
+            borderRadius: 6
           }]
         },
         options: {

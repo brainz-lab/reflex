@@ -1,23 +1,123 @@
 @import "tailwindcss";
 
+/* Anthropic/Claude-inspired Design System */
+
+@layer base {
+  :root {
+    /* Warm cream backgrounds */
+    --color-cream-50: #FDFCFA;
+    --color-cream-100: #F9F7F4;
+    --color-cream-200: #F0EDE8;
+    --color-cream-300: #E5E0D8;
+
+    /* Ink/text colors */
+    --color-ink-900: #1C1917;
+    --color-ink-800: #292524;
+    --color-ink-700: #44403C;
+    --color-ink-600: #57534E;
+    --color-ink-500: #78716C;
+    --color-ink-400: #A8A29E;
+    --color-ink-300: #D6D3D1;
+
+    /* Anthropic orange accent */
+    --color-reflex: #D97706;
+    --color-reflex-light: #F59E0B;
+    --color-reflex-dark: #B45309;
+    --color-reflex-bg: #FEF3C7;
+    --color-reflex-bg-subtle: #FFFBEB;
+
+    /* Semantic colors */
+    --color-success: #059669;
+    --color-success-bg: #D1FAE5;
+    --color-warning: #D97706;
+    --color-warning-bg: #FEF3C7;
+    --color-error: #DC2626;
+    --color-error-bg: #FEE2E2;
+  }
+}
+
 @layer components {
+  /* Status badges with Anthropic styling */
   .status-badge {
-    @apply px-2 py-0.5 text-xs font-medium rounded-full uppercase tracking-wide;
+    @apply px-2.5 py-1 text-xs font-semibold rounded-full uppercase tracking-wide;
   }
 
   .status-unresolved {
-    @apply bg-red-100 text-red-700;
+    background: var(--color-reflex-bg);
+    color: var(--color-reflex-dark);
   }
 
   .status-resolved {
-    @apply bg-green-100 text-green-700;
+    background: var(--color-success-bg);
+    color: var(--color-success);
   }
 
   .status-ignored {
-    @apply bg-stone-100 text-stone-600;
+    background: var(--color-cream-200);
+    color: var(--color-ink-500);
   }
 
   .status-muted {
-    @apply bg-yellow-100 text-yellow-700;
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+  }
+
+  /* Card component */
+  .card {
+    background: white;
+    border: 1px solid var(--color-cream-200);
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-cream-200);
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%);
+    color: white;
+    @apply px-4 py-2.5 text-sm font-semibold rounded-xl transition-all;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: var(--color-cream-100);
+    color: var(--color-ink-700);
+    @apply px-4 py-2.5 text-sm font-semibold rounded-xl transition-all;
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-cream-200);
+  }
+
+  /* Form inputs */
+  .input {
+    background: white;
+    border: 1px solid var(--color-cream-200);
+    color: var(--color-ink-900);
+    @apply px-4 py-2.5 text-sm rounded-xl outline-none transition-all;
+  }
+
+  .input:focus {
+    border-color: var(--color-reflex);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--color-ink-900);
+    color: var(--color-cream-200);
+    @apply px-5 py-4 rounded-xl text-sm font-mono overflow-x-auto;
   }
 }

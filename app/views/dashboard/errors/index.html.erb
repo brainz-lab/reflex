@@ -1,32 +1,32 @@
-<div class="space-y-8" data-controller="live-errors" data-live-errors-project-id-value="<%= @project.id %>">
+<div class="space-y-6" data-controller="live-errors" data-live-errors-project-id-value="<%= @project.id %>">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Errors</h1>
-      <p class="text-[14px] mt-1" style="color: #8B8780;">Track and resolve application errors</p>
+      <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-ink-900);">Errors</h1>
+      <p class="text-[14px] mt-1.5" style="color: var(--color-ink-500);">Track and resolve application errors</p>
     </div>
 
     <!-- Live toggle -->
-    <label class="flex items-center gap-2 text-[13px] cursor-pointer" style="color: #6B6760;">
+    <label class="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-white" style="border: 1px solid var(--color-cream-200);">
       <input type="checkbox" data-action="change->live-errors#toggle" data-live-errors-target="toggle"
-             class="rounded border-gray-300 text-red-500 focus:ring-red-500">
-      <span>Live updates</span>
+             class="w-4 h-4 rounded border-2 text-amber-600 focus:ring-amber-500 focus:ring-offset-0" style="border-color: var(--color-cream-300);">
+      <span class="text-[13px] font-medium" style="color: var(--color-ink-600);">Live updates</span>
     </label>
   </div>
 
   <!-- Filters -->
   <div class="flex items-center justify-between gap-4">
-    <div class="flex gap-2">
+    <div class="flex gap-1.5 p-1 rounded-xl" style="background: var(--color-cream-100);">
       <% %w[unresolved resolved ignored].each do |status| %>
         <% active = params[:status] == status || (params[:status].nil? && status == 'unresolved') %>
         <%= link_to dashboard_project_errors_path(@project, status: status, q: params[:q], error_class: params[:error_class], environment: params[:environment]),
-            class: "px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors",
-            style: active ? "background: #1A1A1A; color: #FFFFFE;" : "background: #FFFFFE; border: 1px solid #E8E5E0; color: #6B6760;" do %>
+            class: "px-4 py-2 text-[13px] font-semibold rounded-lg transition-all",
+            style: active ? "background: white; color: var(--color-ink-900); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" : "color: var(--color-ink-500);" do %>
           <%= status.capitalize %>
           <% count = status == 'unresolved' ? @stats[:unresolved] : (status == 'resolved' ? @stats[:resolved] : nil) %>
           <% if count && count > 0 %>
-            <span class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
-                  style="<%= active ? 'background: rgba(255,255,255,0.2);' : 'background: #F0EFED;' %>">
+            <span class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full font-bold"
+                  style="<%= active ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark);' : 'background: var(--color-cream-200); color: var(--color-ink-500);' %>">
               <%= count %>
             </span>
           <% end %>
@@ -36,13 +36,18 @@
 
     <form action="<%= dashboard_project_errors_path(@project) %>" method="get" class="flex items-center gap-2">
       <input type="hidden" name="status" value="<%= params[:status] || 'unresolved' %>">
-      <input type="text" name="q" value="<%= params[:q] %>"
-             placeholder="Search..."
-             class="w-48 px-3 py-1.5 rounded-lg text-[13px] outline-none"
-             style="background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;">
+      <div class="relative">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style="color: var(--color-ink-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" name="q" value="<%= params[:q] %>"
+               placeholder="Search errors..."
+               class="w-56 pl-9 pr-3 py-2 rounded-xl text-[13px] outline-none transition-all focus:ring-2 focus:ring-offset-0"
+               style="background: white; border: 1px solid var(--color-cream-200); color: var(--color-ink-900); --tw-ring-color: var(--color-reflex);">
+      </div>
       <% if params[:q].present? %>
         <%= link_to dashboard_project_errors_path(@project, status: params[:status]),
-            class: "text-[13px]", style: "color: #8B8780;" do %>
+            class: "text-[13px] font-medium px-2 py-1 rounded-lg hover:bg-white transition-colors", style: "color: var(--color-ink-500);" do %>
           Clear
         <% end %>
       <% end %>
@@ -50,16 +55,20 @@
   </div>
 
   <!-- Error list -->
-  <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;" data-live-errors-target="container">
+  <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);" data-live-errors-target="container">
     <% if @errors.any? %>
       <% @errors.each_with_index do |error, index| %>
         <%= render 'error_row', error: error, last: index == @errors.size - 1 %>
       <% end %>
     <% else %>
-      <div class="px-6 py-16 text-center">
-        <div class="text-[32px] mb-3">&#10003;</div>
-        <p class="text-[15px] font-medium" style="color: #1A1A1A;">No errors</p>
-        <p class="text-[14px] mt-1" style="color: #8B8780;">Everything is running smoothly</p>
+      <div class="px-6 py-20 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5" style="background: var(--color-success-bg);">
+          <svg class="w-8 h-8" style="color: var(--color-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <p class="text-[17px] font-semibold" style="color: var(--color-ink-900);">No errors</p>
+        <p class="text-[14px] mt-2" style="color: var(--color-ink-500);">Everything is running smoothly</p>
       </div>
     <% end %>
   </div>

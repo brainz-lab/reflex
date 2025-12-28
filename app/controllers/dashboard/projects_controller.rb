@@ -18,7 +18,28 @@ module Dashboard
         @projects = [project]
       else
         redirect_to new_dashboard_project_path
+        return
       end
+
+      # Preload counts to avoid N+1 queries
+      project_ids = @projects.map(&:id)
+
+      @unresolved_counts = ErrorGroup.where(project_id: project_ids)
+                                      .unresolved
+                                      .group(:project_id)
+                                      .count
+
+      @error_group_counts = ErrorGroup.where(project_id: project_ids)
+                                       .group(:project_id)
+                                       .count
+
+      @error_event_counts = ErrorEvent.where(project_id: project_ids)
+                                       .group(:project_id)
+                                       .count
+
+      @last_event_times = ErrorEvent.where(project_id: project_ids)
+                                     .group(:project_id)
+                                     .maximum(:occurred_at)
     end
 
     def show
@@ -101,12 +122,13 @@ module Dashboard
       @period = params[:period] || '7d'
       @start_date = period_start_date(@period)
 
-      # Overview stats
+      # Overview stats - use single grouped query to avoid N+1
+      status_counts = @project.error_groups.group(:status).count
       @stats = {
-        total_errors: @project.error_groups.count,
-        unresolved: @project.error_groups.unresolved.count,
-        resolved: @project.error_groups.resolved.count,
-        ignored: @project.error_groups.ignored.count,
+        total_errors: status_counts.values.sum,
+        unresolved: status_counts['unresolved'] || 0,
+        resolved: status_counts['resolved'] || 0,
+        ignored: status_counts['ignored'] || 0,
         total_events: @project.error_events.count,
         events_in_period: @project.error_events.where('occurred_at >= ?', @start_date).count
       }
