@@ -16,9 +16,10 @@ module Dashboard
       # In dev, allow dev_<project_id> keys
       if Rails.env.development? && raw_key.start_with?('dev_')
         project_id = raw_key.sub('dev_', '')
-        project = Project.find_by(id: project_id)
-        if project
-          @api_key_info = { valid: true, project_id: project.platform_project_id, project_name: project.name }
+        # Cache the project lookup to avoid duplicate queries in set_project
+        @_cached_project = Project.find_by(id: project_id)
+        if @_cached_project
+          @api_key_info = { valid: true, project_id: @_cached_project.platform_project_id, project_name: @_cached_project.name }
           return
         end
       end
@@ -40,7 +41,9 @@ module Dashboard
       project_id = params[:project_id] || (controller_name == 'projects' ? params[:id] : nil)
       return unless project_id.present?
 
-      @project = Project.find(project_id)
+      # Use cached project from authenticate! if available, otherwise fetch
+      @project = @_cached_project if @_cached_project&.id&.to_s == project_id.to_s
+      @project ||= Project.find(project_id)
 
       # Skip authorization check in development (dev keys auto-match)
       return if Rails.env.development?

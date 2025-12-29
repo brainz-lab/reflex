@@ -25,13 +25,20 @@ module Dashboard
 
       @errors = @errors.recent.limit(100)
 
-      # For filter dropdowns
-      @error_classes = @project.error_groups.distinct.pluck(:error_class).compact.sort
-      @environments = @project.error_groups.distinct.pluck(:last_environment).compact.sort
+      # Load errors into memory to avoid N+1 in view
+      @errors = @errors.to_a
+      @errors_count = @errors.size
 
+      # For filter dropdowns - use single query with pluck for both columns
+      dropdown_data = @project.error_groups.distinct.pluck(:error_class, :last_environment)
+      @error_classes = dropdown_data.map(&:first).compact.uniq.sort
+      @environments = dropdown_data.map(&:last).compact.uniq.sort
+
+      # Stats - use single query with group_by for status counts
+      status_counts = @project.error_groups.group(:status).count
       @stats = {
-        unresolved: @project.error_groups.unresolved.count,
-        resolved: @project.error_groups.resolved.count,
+        unresolved: status_counts['unresolved'] || 0,
+        resolved: status_counts['resolved'] || 0,
         events_today: @project.error_events.where('occurred_at >= ?', Time.current.beginning_of_day).count
       }
     end

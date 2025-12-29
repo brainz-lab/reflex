@@ -53,15 +53,15 @@
         <%= button_to 'Resolve', resolve_dashboard_project_error_path(@project, @error),
             method: :post,
             class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
-            style: "background: linear-gradient(135deg, var(--color-success) 0%, #047857 100%); color: white;" %>
+            style: "background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%); color: white;" %>
         <%= button_to 'Ignore', ignore_dashboard_project_error_path(@project, @error),
             method: :post,
-            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all",
+            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:bg-stone-200",
             style: "background: var(--color-cream-100); color: var(--color-ink-600);" %>
       <% else %>
         <%= button_to 'Unresolve', unresolve_dashboard_project_error_path(@project, @error),
             method: :post,
-            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all",
+            class: "px-4 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:bg-stone-200",
             style: "background: var(--color-cream-100); color: var(--color-ink-600);" %>
       <% end %>
     </div>
@@ -299,6 +299,13 @@
             </dl>
           </div>
         </div>
+
+        <% if @selected_event.request_params.present? %>
+          <div class="mt-5">
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Request params</h3>
+            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@selected_event.request_params) %></pre>
+          </div>
+        <% end %>
 
         <% if @selected_event.context.present? %>
           <div class="mt-5">
