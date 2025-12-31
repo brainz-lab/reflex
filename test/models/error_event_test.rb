@@ -236,7 +236,7 @@ class ErrorEventTest < ActiveSupport::TestCase
       context: { custom_field: "value" },
       tags: { environment: "production" },
       extra: { server: "web-1" },
-      breadcrumbs: [{ action: "user.login", timestamp: Time.current.iso8601 }]
+      breadcrumbs: [ { action: "user.login", timestamp: Time.current.iso8601 } ]
     )
 
     assert_equal "value", event.context["custom_field"]

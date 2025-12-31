@@ -9,7 +9,7 @@ class Api::V1::EventsControllerTest < ActionDispatch::IntegrationTest
   test "POST create processes error and returns event" do
     payload = sample_error_payload
 
-    assert_difference ["ErrorGroup.count", "ErrorEvent.count"], 1 do
+    assert_difference [ "ErrorGroup.count", "ErrorEvent.count" ], 1 do
       post api_v1_errors_url,
         params: payload,
         headers: { "Authorization" => "Bearer #{@api_key}" },
@@ -183,7 +183,7 @@ class Api::V1::EventsControllerTest < ActionDispatch::IntegrationTest
       exception: {
         class: "CustomError",
         message: "Something went wrong",
-        backtrace: ["app/models/user.rb:42:in `method'"]
+        backtrace: [ "app/models/user.rb:42:in `method'" ]
       }
     }
 

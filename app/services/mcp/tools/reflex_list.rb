@@ -9,13 +9,13 @@ module Mcp
         properties: {
           status: {
             type: "string",
-            enum: ["unresolved", "resolved", "ignored", "all"],
+            enum: [ "unresolved", "resolved", "ignored", "all" ],
             default: "unresolved",
             description: "Filter by status"
           },
           sort: {
             type: "string",
-            enum: ["recent", "frequent"],
+            enum: [ "recent", "frequent" ],
             default: "recent",
             description: "Sort order"
           },
@@ -27,13 +27,13 @@ module Mcp
         errors = @project.error_groups
 
         errors = case args[:status]
-        when 'all' then errors
-        when 'resolved' then errors.resolved
-        when 'ignored' then errors.ignored
+        when "all" then errors
+        when "resolved" then errors.resolved
+        when "ignored" then errors.ignored
         else errors.unresolved
         end
 
-        errors = args[:sort] == 'frequent' ? errors.frequent : errors.recent
+        errors = args[:sort] == "frequent" ? errors.frequent : errors.recent
         errors = errors.limit(args[:limit] || 20)
 
         {

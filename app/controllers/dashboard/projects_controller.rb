@@ -1,8 +1,8 @@
 module Dashboard
   class ProjectsController < BaseController
-    skip_before_action :set_project, only: [:index, :new, :create]
-    skip_before_action :authenticate!, only: [:index, :new, :create], if: -> { Rails.env.development? }
-    before_action :set_project, only: [:show, :setup, :mcp_setup, :analytics, :edit, :update]
+    skip_before_action :set_project, only: [ :index, :new, :create ]
+    skip_before_action :authenticate!, only: [ :index, :new, :create ], if: -> { Rails.env.development? }
+    before_action :set_project, only: [ :show, :setup, :mcp_setup, :analytics, :edit, :update ]
 
     def index
       if Rails.env.development?
@@ -13,9 +13,9 @@ module Dashboard
         project = Project.find_or_create_for_platform!(
           platform_project_id: @api_key_info[:project_id],
           name: @api_key_info[:project_name],
-          environment: @api_key_info[:environment] || 'live'
+          environment: @api_key_info[:environment] || "live"
         )
-        @projects = [project]
+        @projects = [ project ]
       else
         redirect_to new_dashboard_project_path
         return
@@ -55,12 +55,12 @@ module Dashboard
         # In dev, create project directly
         @project = Project.new(
           name: params[:project]&.[](:name) || params[:name],
-          environment: params[:project]&.[](:environment) || 'development',
+          environment: params[:project]&.[](:environment) || "development",
           platform_project_id: SecureRandom.uuid
         )
 
         if @project.name.blank?
-          flash.now[:alert] = 'Please enter a project name'
+          flash.now[:alert] = "Please enter a project name"
           return render :new, status: :unprocessable_entity
         end
 
@@ -69,7 +69,7 @@ module Dashboard
           session[:api_key] = "dev_#{@project.id}"
           redirect_to dashboard_project_errors_path(@project), notice: "Created #{@project.name}"
         else
-          flash.now[:alert] = @project.errors.full_messages.join(', ')
+          flash.now[:alert] = @project.errors.full_messages.join(", ")
           render :new, status: :unprocessable_entity
         end
       else
@@ -77,7 +77,7 @@ module Dashboard
         api_key = params[:api_key]&.strip
 
         if api_key.blank?
-          flash.now[:alert] = 'Please enter an API key'
+          flash.now[:alert] = "Please enter an API key"
           @project = Project.new
           return render :new, status: :unprocessable_entity
         end
@@ -85,7 +85,7 @@ module Dashboard
         key_info = PlatformClient.validate_key(api_key)
 
         unless key_info[:valid]
-          flash.now[:alert] = 'Invalid API key. Please check and try again.'
+          flash.now[:alert] = "Invalid API key. Please check and try again."
           @project = Project.new
           return render :new, status: :unprocessable_entity
         end
@@ -93,7 +93,7 @@ module Dashboard
         project = Project.find_or_create_for_platform!(
           platform_project_id: key_info[:project_id],
           name: key_info[:project_name],
-          environment: key_info[:environment] || 'live'
+          environment: key_info[:environment] || "live"
         )
 
         session[:api_key] = api_key
@@ -112,30 +112,30 @@ module Dashboard
 
     def update
       if @project.update(project_params)
-        redirect_to edit_dashboard_project_path(@project), notice: 'Settings saved successfully'
+        redirect_to edit_dashboard_project_path(@project), notice: "Settings saved successfully"
       else
         render :edit, status: :unprocessable_entity
       end
     end
 
     def analytics
-      @period = params[:period] || '7d'
+      @period = params[:period] || "7d"
       @start_date = period_start_date(@period)
 
       # Overview stats - use single grouped query to avoid N+1
       status_counts = @project.error_groups.group(:status).count
       @stats = {
         total_errors: status_counts.values.sum,
-        unresolved: status_counts['unresolved'] || 0,
-        resolved: status_counts['resolved'] || 0,
-        ignored: status_counts['ignored'] || 0,
+        unresolved: status_counts["unresolved"] || 0,
+        resolved: status_counts["resolved"] || 0,
+        ignored: status_counts["ignored"] || 0,
         total_events: @project.error_events.count,
-        events_in_period: @project.error_events.where('occurred_at >= ?', @start_date).count
+        events_in_period: @project.error_events.where("occurred_at >= ?", @start_date).count
       }
 
       # Events over time (for chart)
       @events_by_day = @project.error_events
-        .where('occurred_at >= ?', @start_date)
+        .where("occurred_at >= ?", @start_date)
         .group("DATE(occurred_at)")
         .order("DATE(occurred_at)")
         .count
@@ -145,22 +145,22 @@ module Dashboard
 
       # Top errors by frequency
       @top_errors = @project.error_groups
-        .where('last_seen_at >= ?', @start_date)
+        .where("last_seen_at >= ?", @start_date)
         .order(event_count: :desc)
         .limit(5)
 
       # Errors by class (for chart) - sum event_count per error class
       @errors_by_class = @project.error_groups
-        .where('last_seen_at >= ?', @start_date)
+        .where("last_seen_at >= ?", @start_date)
         .group(:error_class)
-        .order('sum_event_count DESC')
+        .order("sum_event_count DESC")
         .limit(8)
         .sum(:event_count)
         .map { |error_class, count| { error_class: error_class, count: count } }
 
       # Recent errors (new in period)
       @new_errors = @project.error_groups
-        .where('first_seen_at >= ?', @start_date)
+        .where("first_seen_at >= ?", @start_date)
         .order(first_seen_at: :desc)
         .limit(5)
 
@@ -169,59 +169,59 @@ module Dashboard
 
       # Events by environment
       @env_breakdown = @project.error_events
-        .where('occurred_at >= ?', @start_date)
+        .where("occurred_at >= ?", @start_date)
         .group(:environment)
         .count
 
       # Events by hour (for heatmap-style display)
       @events_by_hour = @project.error_events
-        .where('occurred_at >= ?', @start_date)
+        .where("occurred_at >= ?", @start_date)
         .group("EXTRACT(HOUR FROM occurred_at)::integer")
         .count
         .transform_keys(&:to_i)
 
       # Most affected users
       @affected_users = @project.error_events
-        .where('occurred_at >= ?', @start_date)
+        .where("occurred_at >= ?", @start_date)
         .where.not(user_id: nil)
         .group(:user_id, :user_email)
-        .order('count_all DESC')
+        .order("count_all DESC")
         .limit(5)
         .count
 
       # Errors by release/deploy
       @errors_by_release = @project.error_events
-        .where('occurred_at >= ?', @start_date)
-        .where.not(release: [nil, ''])
+        .where("occurred_at >= ?", @start_date)
+        .where.not(release: [ nil, "" ])
         .group(:release)
-        .order('count_all DESC')
+        .order("count_all DESC")
         .limit(8)
         .count
 
       # Errors by branch
       @errors_by_branch = @project.error_events
-        .where('occurred_at >= ?', @start_date)
-        .where.not(branch: [nil, ''])
+        .where("occurred_at >= ?", @start_date)
+        .where.not(branch: [ nil, "" ])
         .group(:branch)
-        .order('count_all DESC')
+        .order("count_all DESC")
         .limit(5)
         .count
 
       # Errors by commit
       @errors_by_commit = @project.error_events
-        .where('occurred_at >= ?', @start_date)
-        .where.not(commit: [nil, ''])
+        .where("occurred_at >= ?", @start_date)
+        .where.not(commit: [ nil, "" ])
         .group(:commit)
-        .order('count_all DESC')
+        .order("count_all DESC")
         .limit(8)
         .count
 
       # Errors by server/host
       @errors_by_server = @project.error_events
-        .where('occurred_at >= ?', @start_date)
-        .where.not(server_name: [nil, ''])
+        .where("occurred_at >= ?", @start_date)
+        .where.not(server_name: [ nil, "" ])
         .group(:server_name)
-        .order('count_all DESC')
+        .order("count_all DESC")
         .limit(5)
         .count
     end
@@ -234,10 +234,10 @@ module Dashboard
 
     def period_start_date(period)
       case period
-      when '24h' then 24.hours.ago
-      when '7d' then 7.days.ago
-      when '30d' then 30.days.ago
-      when '90d' then 90.days.ago
+      when "24h" then 24.hours.ago
+      when "7d" then 7.days.ago
+      when "30d" then 30.days.ago
+      when "90d" then 90.days.ago
       else 7.days.ago
       end
     end
@@ -251,7 +251,7 @@ module Dashboard
         # Handle both Date keys and string keys
         count = data[current] || data[current.to_s] || 0
         result << {
-          date: current.strftime('%b %d'),
+          date: current.strftime("%b %d"),
           count: count
         }
         current += 1.day

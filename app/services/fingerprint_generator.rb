@@ -1,4 +1,4 @@
-require 'digest'
+require "digest"
 
 class FingerprintGenerator
   def self.generate(payload)
@@ -11,7 +11,7 @@ class FingerprintGenerator
       normalize_message(payload[:message] || payload.dig(:exception, :message))
     ].compact
 
-    Digest::SHA256.hexdigest(components.join('|'))[0..15]
+    Digest::SHA256.hexdigest(components.join("|"))[0..15]
   end
 
   def self.extract_file(payload)
@@ -21,7 +21,7 @@ class FingerprintGenerator
     if first_frame.is_a?(String)
       first_frame.match(/^(.+):\d+/)&.captures&.first
     elsif first_frame.is_a?(Hash)
-      first_frame['file']
+      first_frame["file"]
     end
   end
 
@@ -32,7 +32,7 @@ class FingerprintGenerator
     if first_frame.is_a?(String)
       first_frame.match(/in `(.+)'/)&.captures&.first
     elsif first_frame.is_a?(Hash)
-      first_frame['function']
+      first_frame["function"]
     end
   end
 
@@ -41,8 +41,8 @@ class FingerprintGenerator
 
     # Remove dynamic parts from message
     message
-      .gsub(/\b[0-9a-f]{8,}\b/i, 'ID')     # Hex IDs
-      .gsub(/\b\d+\b/, 'N')                  # Numbers
+      .gsub(/\b[0-9a-f]{8,}\b/i, "ID")     # Hex IDs
+      .gsub(/\b\d+\b/, "N")                  # Numbers
       .gsub(/"[^"]*"/, '"..."')              # Quoted strings
       .gsub(/'[^']*'/, "'...'")              # Single quoted strings
       .truncate(200)

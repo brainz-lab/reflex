@@ -11,10 +11,10 @@ module Mcp
       }.freeze
 
       def call(args)
-        since = parse_since(args[:since] || '24h')
+        since = parse_since(args[:since] || "24h")
 
         errors = @project.error_groups
-        events = @project.error_events.where('occurred_at >= ?', since)
+        events = @project.error_events.where("occurred_at >= ?", since)
 
         {
           total_errors: errors.count,

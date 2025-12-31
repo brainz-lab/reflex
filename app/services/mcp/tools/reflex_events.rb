@@ -11,12 +11,12 @@ module Mcp
           error_id: { type: "string", description: "Error group ID" },
           limit: { type: "integer", description: "Max events to return (default: 20)" }
         },
-        required: ["error_id"]
+        required: [ "error_id" ]
       }.freeze
 
       def call(args)
         error = @project.error_groups.find(args[:error_id])
-        limit = [args[:limit] || 20, 100].min
+        limit = [ args[:limit] || 20, 100 ].min
         events = error.events.recent.limit(limit)
 
         {

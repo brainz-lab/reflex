@@ -31,7 +31,7 @@ module HypertableFindable
       id = match[1]
       time_str = match[2]
 
-      [id, Time.zone.parse(time_str)]
+      [ id, Time.zone.parse(time_str) ]
     end
   end
 end

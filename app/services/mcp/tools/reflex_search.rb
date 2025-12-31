@@ -26,7 +26,7 @@ module Mcp
 
         if args[:since].present?
           since = parse_since(args[:since])
-          errors = errors.where('last_seen_at >= ?', since)
+          errors = errors.where("last_seen_at >= ?", since)
         end
 
         # If filtering by user or commit, need to check events

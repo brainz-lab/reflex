@@ -40,8 +40,8 @@ class CreateErrorEvents < ActiveRecord::Migration[8.0]
       t.datetime :occurred_at, null: false
       t.datetime :created_at, null: false
 
-      t.index [:project_id, :occurred_at]
-      t.index [:error_group_id, :occurred_at]
+      t.index [ :project_id, :occurred_at ]
+      t.index [ :error_group_id, :occurred_at ]
       t.index :request_id
       t.index :user_id
       t.index :commit

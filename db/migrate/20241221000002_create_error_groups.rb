@@ -35,10 +35,10 @@ class CreateErrorGroups < ActiveRecord::Migration[8.0]
 
       t.timestamps
 
-      t.index [:project_id, :fingerprint], unique: true
-      t.index [:project_id, :status]
-      t.index [:project_id, :last_seen_at]
-      t.index [:project_id, :error_class]
+      t.index [ :project_id, :fingerprint ], unique: true
+      t.index [ :project_id, :status ]
+      t.index [ :project_id, :last_seen_at ]
+      t.index [ :project_id, :error_class ]
       t.index :fingerprint
     end
   end

@@ -3,18 +3,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # Project provisioning (internal API for SDK auto-setup)
-      post 'projects/provision', to: 'projects#provision'
-      get 'projects/lookup', to: 'projects#lookup'
+      post "projects/provision", to: "projects#provision"
+      get "projects/lookup", to: "projects#lookup"
 
       # Ingest errors
-      post 'errors', to: 'events#create'
-      post 'errors/batch', to: 'events#batch'
+      post "errors", to: "events#create"
+      post "errors/batch", to: "events#batch"
 
       # Capture messages (without exception)
-      post 'messages', to: 'events#create_message'
+      post "messages", to: "events#create_message"
 
       # Query errors
-      resources :errors, only: [:index, :show] do
+      resources :errors, only: [ :index, :show ] do
         member do
           post :resolve
           post :ignore
@@ -33,46 +33,46 @@ Rails.application.routes.draw do
 
   # MCP Server
   namespace :mcp do
-    get 'tools', to: 'tools#index'
-    post 'tools/:name', to: 'tools#call'
-    post 'rpc', to: 'tools#rpc'
+    get "tools", to: "tools#index"
+    post "tools/:name", to: "tools#call"
+    post "rpc", to: "tools#rpc"
   end
 
   # Dashboard
   namespace :dashboard do
-    resources :projects, only: [:index, :show, :new, :create, :edit, :update] do
+    resources :projects, only: [ :index, :show, :new, :create, :edit, :update ] do
       member do
         get :setup
         get :mcp_setup
         get :analytics
-        get :settings, to: 'projects#edit'
+        get :settings, to: "projects#edit"
       end
-      resources :errors, only: [:index, :show] do
+      resources :errors, only: [ :index, :show ] do
         member do
           post :resolve
           post :ignore
           post :unresolve
         end
-        resources :events, only: [:index, :show]
+        resources :events, only: [ :index, :show ]
       end
     end
-    root to: 'projects#index'
+    root to: "projects#index"
 
     # Dev Tools (development only)
-    resource :dev_tools, only: [:show], controller: 'dev_tools' do
-      post 'clean_errors'
-      post 'clean_all'
+    resource :dev_tools, only: [ :show ], controller: "dev_tools" do
+      post "clean_errors"
+      post "clean_all"
     end
   end
 
   # SSO from Platform
-  get 'sso/callback', to: 'sso#callback'
+  get "sso/callback", to: "sso#callback"
 
   # Health check
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # WebSocket
-  mount ActionCable.server => '/cable'
+  mount ActionCable.server => "/cable"
 
-  root 'dashboard/projects#index'
+  root "dashboard/projects#index"
 end

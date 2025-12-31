@@ -1,6 +1,6 @@
 class ErrorGroup < ApplicationRecord
   belongs_to :project, counter_cache: :error_count
-  has_many :events, class_name: 'ErrorEvent', dependent: :destroy
+  has_many :events, class_name: "ErrorEvent", dependent: :destroy
 
   STATUSES = %w[unresolved resolved ignored muted].freeze
 
@@ -8,17 +8,17 @@ class ErrorGroup < ApplicationRecord
   validates :error_class, presence: true
   validates :status, inclusion: { in: STATUSES }
 
-  scope :unresolved, -> { where(status: 'unresolved') }
-  scope :resolved, -> { where(status: 'resolved') }
-  scope :ignored, -> { where(status: 'ignored') }
-  scope :muted, -> { where(status: 'muted') }
+  scope :unresolved, -> { where(status: "unresolved") }
+  scope :resolved, -> { where(status: "resolved") }
+  scope :ignored, -> { where(status: "ignored") }
+  scope :muted, -> { where(status: "muted") }
   scope :active, -> { where(status: %w[unresolved muted]) }
   scope :recent, -> { order(last_seen_at: :desc) }
   scope :frequent, -> { order(event_count: :desc) }
 
   def resolve!(user_id: nil)
     update!(
-      status: 'resolved',
+      status: "resolved",
       resolved_at: Time.current,
       resolved_by: user_id
     )
@@ -26,18 +26,18 @@ class ErrorGroup < ApplicationRecord
 
   def unresolve!
     update!(
-      status: 'unresolved',
+      status: "unresolved",
       resolved_at: nil,
       resolved_by: nil
     )
   end
 
   def ignore!
-    update!(status: 'ignored')
+    update!(status: "ignored")
   end
 
   def mute!(duration: nil)
-    update!(status: 'muted')
+    update!(status: "muted")
     # TODO: Schedule unmute if duration provided
   end
 
@@ -54,7 +54,7 @@ class ErrorGroup < ApplicationRecord
   end
 
   def resolved?
-    status == 'resolved'
+    status == "resolved"
   end
 
   def short_message

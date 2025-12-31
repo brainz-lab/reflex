@@ -10,12 +10,12 @@ module Api
 
         if params[:since].present?
           since = Time.parse(params[:since]) rescue nil
-          errors = errors.where('last_seen_at >= ?', since) if since
+          errors = errors.where("last_seen_at >= ?", since) if since
         end
 
         errors = case params[:sort]
-        when 'frequent' then errors.frequent
-        when 'first_seen' then errors.order(first_seen_at: :desc)
+        when "frequent" then errors.frequent
+        when "first_seen" then errors.order(first_seen_at: :desc)
         else errors.recent
         end
 
@@ -81,45 +81,45 @@ module Api
 
       # Signal integration: Query errors with aggregation for alerting
       def query
-        error_type = params[:error_type] || 'all'
-        aggregation = params[:aggregation] || 'count'
-        window = parse_window(params[:window] || '5m')
-        query_filters = JSON.parse(params[:query] || '{}')
+        error_type = params[:error_type] || "all"
+        aggregation = params[:aggregation] || "count"
+        window = parse_window(params[:window] || "5m")
+        query_filters = JSON.parse(params[:query] || "{}")
 
-        scope = current_project.error_events.where('occurred_at >= ?', window.ago)
+        scope = current_project.error_events.where("occurred_at >= ?", window.ago)
 
         # Filter by error type
-        scope = scope.where(error_class: error_type) unless error_type == 'all'
+        scope = scope.where(error_class: error_type) unless error_type == "all"
 
         # Apply additional query filters
         query_filters.each do |key, value|
           case key
-          when 'environment' then scope = scope.where(environment: value)
-          when 'status' then scope = scope.joins(:error_group).where(error_groups: { status: value })
+          when "environment" then scope = scope.where(environment: value)
+          when "status" then scope = scope.joins(:error_group).where(error_groups: { status: value })
           end
         end
 
         value = case aggregation
-                when 'count' then scope.count
-                when 'rate'
+        when "count" then scope.count
+        when "rate"
                   # Errors per minute
                   count = scope.count
                   minutes = (window / 60.0).to_f
                   minutes > 0 ? (count / minutes).round(2) : 0
-                else
+        else
                   scope.count
-                end
+        end
 
         render json: { value: value, error_type: error_type, window: params[:window] }
       end
 
       # Signal integration: Get baseline for anomaly detection
       def baseline
-        error_type = params[:error_type] || 'all'
-        window = parse_window(params[:window] || '24h')
+        error_type = params[:error_type] || "all"
+        window = parse_window(params[:window] || "24h")
 
-        scope = current_project.error_events.where('occurred_at >= ?', window.ago)
-        scope = scope.where(error_class: error_type) unless error_type == 'all'
+        scope = current_project.error_events.where("occurred_at >= ?", window.ago)
+        scope = scope.where(error_class: error_type) unless error_type == "all"
 
         # Get hourly counts for the baseline window
         hourly_counts = scope.group("date_trunc('hour', occurred_at)")
@@ -133,21 +133,21 @@ module Api
           variance = hourly_counts.map { |c| (c - mean)**2 }.sum / hourly_counts.size
           stddev = Math.sqrt(variance)
 
-          render json: { mean: mean, stddev: [stddev, 1].max }
+          render json: { mean: mean, stddev: [ stddev, 1 ].max }
         end
       end
 
       # Signal integration: Get last error for absence detection
       def last
-        error_type = params[:error_type] || 'all'
-        query_filters = JSON.parse(params[:query] || '{}')
+        error_type = params[:error_type] || "all"
+        query_filters = JSON.parse(params[:query] || "{}")
 
         scope = current_project.error_events
-        scope = scope.where(error_class: error_type) unless error_type == 'all'
+        scope = scope.where(error_class: error_type) unless error_type == "all"
 
         query_filters.each do |key, value|
           case key
-          when 'environment' then scope = scope.where(environment: value)
+          when "environment" then scope = scope.where(environment: value)
           end
         end
 
@@ -173,9 +173,9 @@ module Api
 
         value = match[1].to_i
         case match[2]
-        when 'm' then value.minutes
-        when 'h' then value.hours
-        when 'd' then value.days
+        when "m" then value.minutes
+        when "h" then value.hours
+        when "d" then value.days
         else 5.minutes
         end
       end

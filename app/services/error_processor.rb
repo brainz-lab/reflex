@@ -30,7 +30,7 @@ class ErrorProcessor
 
   def find_or_create_group(fingerprint)
     @project.error_groups.find_or_create_by!(fingerprint: fingerprint) do |group|
-      group.error_class = @payload[:error_class] || @payload[:exception]&.dig(:class) || 'UnknownError'
+      group.error_class = @payload[:error_class] || @payload[:exception]&.dig(:class) || "UnknownError"
       group.message = @payload[:message] || @payload[:exception]&.dig(:message)
       group.file_path = extract_file_path
       group.line_number = extract_line_number
@@ -45,7 +45,7 @@ class ErrorProcessor
   def create_event(error_group)
     error_group.events.create!(
       project: @project,
-      error_class: @payload[:error_class] || @payload[:exception]&.dig(:class) || 'UnknownError',
+      error_class: @payload[:error_class] || @payload[:exception]&.dig(:class) || "UnknownError",
       message: @payload[:message] || @payload[:exception]&.dig(:message),
       backtrace: normalize_backtrace(@payload[:backtrace] || @payload[:exception]&.dig(:backtrace) || []),
 
@@ -84,30 +84,30 @@ class ErrorProcessor
         match = frame.match(/^(.+):(\d+):in `(.+)'$/)
         if match
           {
-            'file' => match[1],
-            'line' => match[2].to_i,
-            'function' => match[3],
-            'in_app' => in_app?(match[1])
+            "file" => match[1],
+            "line" => match[2].to_i,
+            "function" => match[3],
+            "in_app" => in_app?(match[1])
           }
         else
-          { 'file' => frame, 'line' => 0, 'function' => '', 'in_app' => false }
+          { "file" => frame, "line" => 0, "function" => "", "in_app" => false }
         end
       else
-        frame.merge('in_app' => in_app?(frame['file']))
+        frame.merge("in_app" => in_app?(frame["file"]))
       end
     end
   end
 
   def in_app?(file_path)
     return false if file_path.nil?
-    return false if file_path.include?('/gems/')
-    return false if file_path.include?('vendor/')
-    return false if file_path.include?('/ruby/')
+    return false if file_path.include?("/gems/")
+    return false if file_path.include?("vendor/")
+    return false if file_path.include?("/ruby/")
 
     # Match both relative and absolute paths containing app/ or lib/
-    file_path.start_with?('app/', 'lib/') ||
-      file_path.include?('/app/') ||
-      file_path.include?('/lib/')
+    file_path.start_with?("app/", "lib/") ||
+      file_path.include?("/app/") ||
+      file_path.include?("/lib/")
   end
 
   def extract_file_path
@@ -117,7 +117,7 @@ class ErrorProcessor
     if first_frame.is_a?(String)
       first_frame.match(/^(.+):\d+/)&.captures&.first
     else
-      first_frame['file']
+      first_frame["file"]
     end
   end
 
@@ -128,7 +128,7 @@ class ErrorProcessor
     if first_frame.is_a?(String)
       first_frame.match(/:(\d+):/)&.captures&.first&.to_i
     else
-      first_frame['line']
+      first_frame["line"]
     end
   end
 
@@ -139,7 +139,7 @@ class ErrorProcessor
     if first_frame.is_a?(String)
       first_frame.match(/in `(.+)'/)&.captures&.first
     else
-      first_frame['function']
+      first_frame["function"]
     end
   end
 
@@ -150,7 +150,7 @@ class ErrorProcessor
 
     params.transform_keys(&:to_s).each_with_object({}) do |(key, value), result|
       if sensitive_keys.include?(key.to_s.downcase)
-        result[key] = '[FILTERED]'
+        result[key] = "[FILTERED]"
       elsif value.is_a?(Hash)
         result[key] = sanitize_params(value)
       else
@@ -172,7 +172,7 @@ class ErrorProcessor
 
   def broadcast_new_error(error_group, event)
     ErrorsChannel.broadcast_to(@project, {
-      type: 'new_error',
+      type: "new_error",
       error_group: {
         id: error_group.id,
         error_class: error_group.error_class,

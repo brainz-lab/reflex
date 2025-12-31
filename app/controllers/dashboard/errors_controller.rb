@@ -18,8 +18,8 @@ module Dashboard
 
       # Status filter
       @errors = case params[:status]
-      when 'resolved' then @errors.resolved
-      when 'ignored' then @errors.ignored
+      when "resolved" then @errors.resolved
+      when "ignored" then @errors.ignored
       else @errors.unresolved
       end
 
@@ -37,9 +37,9 @@ module Dashboard
       # Stats - use single query with group_by for status counts
       status_counts = @project.error_groups.group(:status).count
       @stats = {
-        unresolved: status_counts['unresolved'] || 0,
-        resolved: status_counts['resolved'] || 0,
-        events_today: @project.error_events.where('occurred_at >= ?', Time.current.beginning_of_day).count
+        unresolved: status_counts["unresolved"] || 0,
+        resolved: status_counts["resolved"] || 0,
+        events_today: @project.error_events.where("occurred_at >= ?", Time.current.beginning_of_day).count
       }
     end
 
@@ -66,21 +66,21 @@ module Dashboard
       @error = @project.error_groups.find(params[:id])
       @error.resolve!
       ErrorsChannel.broadcast_error_resolved(@project, @error)
-      redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as resolved'
+      redirect_to dashboard_project_error_path(@project, @error), notice: "Error marked as resolved"
     end
 
     def ignore
       @error = @project.error_groups.find(params[:id])
       @error.ignore!
       ErrorsChannel.broadcast_error_ignored(@project, @error)
-      redirect_to dashboard_project_errors_path(@project), notice: 'Error ignored'
+      redirect_to dashboard_project_errors_path(@project), notice: "Error ignored"
     end
 
     def unresolve
       @error = @project.error_groups.find(params[:id])
       @error.unresolve!
       ErrorsChannel.broadcast_error_unresolved(@project, @error)
-      redirect_to dashboard_project_error_path(@project, @error), notice: 'Error marked as unresolved'
+      redirect_to dashboard_project_error_path(@project, @error), notice: "Error marked as unresolved"
     end
   end
 end

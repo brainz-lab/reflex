@@ -180,7 +180,7 @@ breadcrumb_flows = [
     { type: "navigation", category: "navigation", message: "Navigated to /cart", data: { from: "/products", to: "/cart" }, level: "info" },
     { type: "ui.click", category: "ui", message: "Clicked 'Checkout' button", data: { element: "button.checkout", text: "Proceed to Checkout" }, level: "info" },
     { type: "navigation", category: "navigation", message: "Navigated to /checkout", data: { from: "/cart", to: "/checkout" }, level: "info" },
-    { type: "ui.input", category: "ui", message: "Filled shipping address form", data: { form: "shipping-form", fields: ["address", "city", "zip"] }, level: "info" },
+    { type: "ui.input", category: "ui", message: "Filled shipping address form", data: { form: "shipping-form", fields: [ "address", "city", "zip" ] }, level: "info" },
     { type: "ui.click", category: "ui", message: "Clicked 'Continue to Payment' button", data: { element: "button.continue", text: "Continue to Payment" }, level: "info" },
     { type: "http", category: "http", message: "POST /checkout/payment", data: { method: "POST", url: "/checkout/payment", status_code: 500 }, level: "error" }
   ],
@@ -197,7 +197,7 @@ breadcrumb_flows = [
   # Dashboard analytics flow
   [
     { type: "navigation", category: "navigation", message: "Navigated to /login", data: { from: nil, to: "/login" }, level: "info" },
-    { type: "ui.input", category: "ui", message: "Filled login form", data: { form: "login-form", fields: ["email", "password"] }, level: "info" },
+    { type: "ui.input", category: "ui", message: "Filled login form", data: { form: "login-form", fields: [ "email", "password" ] }, level: "info" },
     { type: "ui.click", category: "ui", message: "Clicked 'Sign In' button", data: { element: "button.login", text: "Sign In" }, level: "info" },
     { type: "http", category: "http", message: "POST /sessions", data: { method: "POST", url: "/sessions", status_code: 200 }, level: "info" },
     { type: "navigation", category: "navigation", message: "Navigated to /dashboard", data: { from: "/login", to: "/dashboard" }, level: "info" },
@@ -263,7 +263,7 @@ errors_data.each do |error_data|
   end
 
   # Create events for this group
-  event_count = [error_data[:events], 10].min # Cap at 10 events per group for seeds
+  event_count = [ error_data[:events], 10 ].min # Cap at 10 events per group for seeds
 
   event_count.times do |i|
     occurred_at = rand(first_seen..last_seen)

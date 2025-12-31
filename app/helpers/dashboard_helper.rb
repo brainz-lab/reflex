@@ -18,16 +18,16 @@ module DashboardHelper
   # Navigation helpers for sidebar
   def nav_active?(path_pattern)
     case path_pattern
-    when '/errors'
-      controller_name == 'errors'
-    when '/analytics'
-      action_name == 'analytics'
-    when '/setup'
-      action_name == 'setup'
-    when '/mcp'
-      action_name == 'mcp_setup'
-    when '/settings'
-      action_name == 'edit' && controller_name == 'projects'
+    when "/errors"
+      controller_name == "errors"
+    when "/analytics"
+      action_name == "analytics"
+    when "/setup"
+      action_name == "setup"
+    when "/mcp"
+      action_name == "mcp_setup"
+    when "/settings"
+      action_name == "edit" && controller_name == "projects"
     else
       request.path.include?(path_pattern)
     end

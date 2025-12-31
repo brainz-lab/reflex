@@ -12,7 +12,7 @@ module Api
         raw_key = extract_api_key
 
         # First try to find project by auto-provisioned API key (rfx_xxx format)
-        if raw_key&.start_with?('rfx_')
+        if raw_key&.start_with?("rfx_")
           @current_project = find_project_by_api_key(raw_key)
           if @current_project
             @key_info = { valid: true, features: { reflex: true } }
@@ -24,14 +24,14 @@ module Api
         @key_info = PlatformClient.validate_key(raw_key)
 
         unless @key_info[:valid]
-          render json: { error: 'Invalid API key' }, status: :unauthorized
+          render json: { error: "Invalid API key" }, status: :unauthorized
           return
         end
 
         @current_project = Project.find_or_create_for_platform!(
           platform_project_id: @key_info[:project_id],
           name: @key_info[:project_name],
-          environment: @key_info[:environment] || 'live'
+          environment: @key_info[:environment] || "live"
         )
       end
 
@@ -46,16 +46,16 @@ module Api
 
         unless @key_info.dig(:features, :reflex)
           render json: {
-            error: 'Reflex is not included in your plan',
-            upgrade_url: 'https://brainzlab.ai/pricing'
+            error: "Reflex is not included in your plan",
+            upgrade_url: "https://brainzlab.ai/pricing"
           }, status: :forbidden
         end
       end
 
       def extract_api_key
-        auth_header = request.headers['Authorization']
-        return auth_header.sub(/^Bearer\s+/, '') if auth_header&.start_with?('Bearer ')
-        request.headers['X-API-Key'] || params[:api_key]
+        auth_header = request.headers["Authorization"]
+        return auth_header.sub(/^Bearer\s+/, "") if auth_header&.start_with?("Bearer ")
+        request.headers["X-API-Key"] || params[:api_key]
       end
 
       def track_usage!(count = 1)
@@ -63,8 +63,8 @@ module Api
 
         PlatformClient.track_usage(
           project_id: @key_info[:project_id],
-          product: 'reflex',
-          metric: 'errors',
+          product: "reflex",
+          metric: "errors",
           count: count
         )
       end

@@ -5,7 +5,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
     project = create_project
     payload = sample_error_payload
 
-    assert_difference ["ErrorGroup.count", "ErrorEvent.count"], 1 do
+    assert_difference [ "ErrorGroup.count", "ErrorEvent.count" ], 1 do
       processor = ErrorProcessor.new(project: project, payload: payload)
       result = processor.process!
 
@@ -92,7 +92,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
         class: "CustomError",
         message: "Something went wrong"
       },
-      backtrace: ["app/models/user.rb:42:in `method'"]
+      backtrace: [ "app/models/user.rb:42:in `method'" ]
     }
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -105,7 +105,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
     project = create_project
     payload = {
       message: "Something went wrong",
-      backtrace: ["app/models/user.rb:42:in `method'"]
+      backtrace: [ "app/models/user.rb:42:in `method'" ]
     }
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -230,7 +230,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
   test "extracts file path from backtrace" do
     project = create_project
     payload = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -242,7 +242,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
   test "extracts line number from backtrace" do
     project = create_project
     payload = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -254,7 +254,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
   test "extracts function name from backtrace" do
     project = create_project
     payload = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -334,7 +334,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
       context: { custom: "value" },
       tags: { team: "backend" },
       extra: { debug_info: "test" },
-      breadcrumbs: [{ action: "user.login" }]
+      breadcrumbs: [ { action: "user.login" } ]
     )
 
     processor = ErrorProcessor.new(project: project, payload: payload)
@@ -364,7 +364,7 @@ class ErrorProcessorTest < ActiveSupport::TestCase
     payload = {
       "error_class" => "NoMethodError",
       "message" => "Test",
-      "backtrace" => ["app/models/user.rb:42:in `method'"],
+      "backtrace" => [ "app/models/user.rb:42:in `method'" ],
       "request" => {
         "method" => "POST",
         "params" => { "name" => "John" }

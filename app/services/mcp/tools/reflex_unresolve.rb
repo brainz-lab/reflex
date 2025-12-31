@@ -8,7 +8,7 @@ module Mcp
         properties: {
           error_id: { type: "string", description: "Error group ID" }
         },
-        required: ["error_id"]
+        required: [ "error_id" ]
       }.freeze
 
       def call(args)

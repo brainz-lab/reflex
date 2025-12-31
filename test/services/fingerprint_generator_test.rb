@@ -5,13 +5,13 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
     payload1 = {
       error_class: "NoMethodError",
       message: "undefined method 'foo' for nil:NilClass",
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     }
 
     payload2 = {
       error_class: "NoMethodError",
       message: "undefined method 'foo' for nil:NilClass",
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     }
 
     fingerprint1 = FingerprintGenerator.generate(payload1)
@@ -32,10 +32,10 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
 
   test "generates different fingerprint for different file" do
     payload1 = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
     payload2 = sample_error_payload(
-      backtrace: ["app/models/post.rb:42:in `full_name'"]
+      backtrace: [ "app/models/post.rb:42:in `full_name'" ]
     )
 
     fingerprint1 = FingerprintGenerator.generate(payload1)
@@ -46,10 +46,10 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
 
   test "generates different fingerprint for different function" do
     payload1 = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
     payload2 = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `email'"]
+      backtrace: [ "app/models/user.rb:42:in `email'" ]
     )
 
     fingerprint1 = FingerprintGenerator.generate(payload1)
@@ -90,7 +90,7 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
 
   test "extract_file handles string backtrace format" do
     payload = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
 
     file = FingerprintGenerator.extract_file(payload)
@@ -112,7 +112,7 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
     payload = {
       exception: {
         class: "NoMethodError",
-        backtrace: ["app/models/user.rb:42:in `full_name'"]
+        backtrace: [ "app/models/user.rb:42:in `full_name'" ]
       }
     }
 
@@ -122,7 +122,7 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
 
   test "extract_function handles string backtrace format" do
     payload = sample_error_payload(
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     )
 
     function = FingerprintGenerator.extract_function(payload)
@@ -211,7 +211,7 @@ class FingerprintGeneratorTest < ActiveSupport::TestCase
   test "handles missing message gracefully" do
     payload = {
       error_class: "NoMethodError",
-      backtrace: ["app/models/user.rb:42:in `full_name'"]
+      backtrace: [ "app/models/user.rb:42:in `full_name'" ]
     }
 
     assert_nothing_raised do

@@ -1,6 +1,6 @@
 module Dashboard
   class BaseController < ApplicationController
-    layout 'dashboard'
+    layout "dashboard"
 
     before_action :authenticate!
     before_action :set_project
@@ -14,8 +14,8 @@ module Dashboard
       return redirect_to_auth if raw_key.blank?
 
       # In dev, allow dev_<project_id> keys
-      if Rails.env.development? && raw_key.start_with?('dev_')
-        project_id = raw_key.sub('dev_', '')
+      if Rails.env.development? && raw_key.start_with?("dev_")
+        project_id = raw_key.sub("dev_", "")
         # Cache the project lookup to avoid duplicate queries in set_project
         @_cached_project = Project.find_by(id: project_id)
         if @_cached_project
@@ -38,7 +38,7 @@ module Dashboard
     def set_project
       # For nested routes (errors, events), use :project_id
       # For member routes on projects (edit, setup, analytics), use :id
-      project_id = params[:project_id] || (controller_name == 'projects' ? params[:id] : nil)
+      project_id = params[:project_id] || (controller_name == "projects" ? params[:id] : nil)
       return unless project_id.present?
 
       # Use cached project from authenticate! if available, otherwise fetch
@@ -50,7 +50,7 @@ module Dashboard
 
       # Verify the project matches the API key's project
       if @api_key_info && @api_key_info[:project_id] != @project.platform_project_id
-        redirect_to dashboard_root_path, alert: 'Project access denied'
+        redirect_to dashboard_root_path, alert: "Project access denied"
       end
     end
 
@@ -83,7 +83,7 @@ module Dashboard
         redirect_to new_dashboard_project_path
       else
         # Show auth required page
-        render 'dashboard/auth_required', status: :unauthorized
+        render "dashboard/auth_required", status: :unauthorized
       end
     end
   end
