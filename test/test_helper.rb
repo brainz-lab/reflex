@@ -24,8 +24,9 @@ module ActiveSupport
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    fixtures :all
+    # Don't use fixtures - they conflict with TimescaleDB hypertables
+    # Use helper methods (create_project, create_error_group, etc.) instead
+    self.use_transactional_tests = true
 
     # Add more helper methods to be used by all tests here...
 
@@ -115,9 +116,8 @@ class PlatformClient
         environment: "live",
         features: { reflex: true }
       }
-    elsif api_key&.start_with?("rfx_")
-      nil # Will be handled by find_project_by_api_key
     else
+      # Return invalid for all other keys (including rfx_ that don't match a project)
       { valid: false }
     end
   end

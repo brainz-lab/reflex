@@ -31,7 +31,8 @@ module Mcp
         }
       when "tools/call"
         tool_name = params_data[:name]
-        arguments = params_data[:arguments] || {}
+        raw_args = params_data[:arguments] || {}
+        arguments = raw_args.respond_to?(:permit!) ? raw_args.permit!.to_h : raw_args.to_h
         result = mcp_server.call_tool(tool_name, arguments)
         render json: {
           jsonrpc: "2.0",
