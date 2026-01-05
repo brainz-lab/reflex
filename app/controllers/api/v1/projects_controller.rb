@@ -22,14 +22,22 @@ module Api
           environment: params[:environment] || "development"
         )
 
-        # Generate API key for this project (stored in settings or separate table)
-        api_key = project.settings["api_key"] ||= "rfx_#{SecureRandom.hex(24)}"
-        project.save! if project.settings_changed?
+        # Generate keys for this project (stored in settings)
+        if project.settings.is_a?(Hash)
+          project.settings["api_key"] ||= "rfx_api_#{SecureRandom.hex(24)}"
+          project.settings["ingest_key"] ||= "rfx_ingest_#{SecureRandom.hex(24)}"
+          project.settings["allowed_origins"] ||= []
+          project.save! if project.settings_changed?
+        end
+
+        api_key = project.settings&.dig("api_key") || "rfx_api_#{project.id}"
+        ingest_key = project.settings&.dig("ingest_key") || "rfx_ingest_#{project.id}"
 
         render json: {
           id: project.id,
           name: project.name,
           api_key: api_key,
+          ingest_key: ingest_key,
           platform_project_id: project.platform_project_id
         }
       end
@@ -43,7 +51,8 @@ module Api
           render json: {
             id: project.id,
             name: project.name,
-            api_key: project.settings["api_key"],
+            api_key: project.settings&.dig("api_key"),
+            ingest_key: project.settings&.dig("ingest_key"),
             platform_project_id: project.platform_project_id
           }
         else
