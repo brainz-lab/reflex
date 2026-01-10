@@ -1,24 +1,15 @@
 module Dashboard
   class ProjectsController < BaseController
     skip_before_action :set_project, only: [ :index, :new, :create ]
-    skip_before_action :authenticate!, only: [ :index, :new, :create ], if: -> { Rails.env.development? }
     before_action :set_project, only: [ :show, :setup, :mcp_setup, :analytics, :edit, :update ]
 
     def index
       if Rails.env.development?
         # In dev, show all projects
         @projects = Project.order(created_at: :desc)
-      elsif @api_key_info && @api_key_info[:project_id]
-        # In production, show only the project for this API key
-        project = Project.find_or_create_for_platform!(
-          platform_project_id: @api_key_info[:project_id],
-          name: @api_key_info[:project_name],
-          environment: @api_key_info[:environment] || "live"
-        )
-        @projects = [ project ]
       else
-        redirect_to new_dashboard_project_path
-        return
+        # In production with SSO, show project for session
+        @projects = [ @project ].compact
       end
 
       # Preload counts to avoid N+1 queries
@@ -65,39 +56,15 @@ module Dashboard
         end
 
         if @project.save
-          # Set a dev API key in session
-          session[:api_key] = "dev_#{@project.id}"
+          session[:platform_project_id] = @project.platform_project_id
           redirect_to dashboard_project_errors_path(@project), notice: "Created #{@project.name}"
         else
           flash.now[:alert] = @project.errors.full_messages.join(", ")
           render :new, status: :unprocessable_entity
         end
       else
-        # In production, require API key from Platform
-        api_key = params[:api_key]&.strip
-
-        if api_key.blank?
-          flash.now[:alert] = "Please enter an API key"
-          @project = Project.new
-          return render :new, status: :unprocessable_entity
-        end
-
-        key_info = PlatformClient.validate_key(api_key)
-
-        unless key_info[:valid]
-          flash.now[:alert] = "Invalid API key. Please check and try again."
-          @project = Project.new
-          return render :new, status: :unprocessable_entity
-        end
-
-        project = Project.find_or_create_for_platform!(
-          platform_project_id: key_info[:project_id],
-          name: key_info[:project_name],
-          environment: key_info[:environment] || "live"
-        )
-
-        session[:api_key] = api_key
-        redirect_to dashboard_project_errors_path(project), notice: "Connected to #{project.name}"
+        # In production, projects are managed via Platform SSO
+        redirect_to dashboard_root_path, alert: "Projects are managed via Platform"
       end
     end
 

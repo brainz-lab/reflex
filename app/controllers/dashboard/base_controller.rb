@@ -2,55 +2,49 @@ module Dashboard
   class BaseController < ApplicationController
     layout "dashboard"
 
-    before_action :authenticate!
+    before_action :authenticate_via_sso!
     before_action :set_project
 
     helper_method :current_project
 
     private
 
-    def authenticate!
-      raw_key = extract_api_key
-      return redirect_to_auth if raw_key.blank?
-
-      # In dev, allow dev_<project_id> keys
-      if Rails.env.development? && raw_key.start_with?("dev_")
-        project_id = raw_key.sub("dev_", "")
-        # Cache the project lookup to avoid duplicate queries in set_project
-        @_cached_project = Project.find_by(id: project_id)
-        if @_cached_project
-          @api_key_info = { valid: true, project_id: @_cached_project.platform_project_id, project_name: @_cached_project.name }
-          return
-        end
+    def authenticate_via_sso!
+      # In development, allow bypass
+      if Rails.env.development?
+        # Use first project for testing, or create one
+        project = Project.first
+        session[:platform_project_id] ||= project&.platform_project_id || "dev_project"
+        session[:platform_user_id] ||= "dev_user"
+        return
       end
 
-      @api_key_info = PlatformClient.validate_key(raw_key)
-
-      unless @api_key_info[:valid]
-        session.delete(:api_key)
-        return redirect_to_auth
+      unless session[:platform_project_id]
+        redirect_to "#{platform_url}/auth/sso?product=reflex&return_to=#{CGI.escape(request.url)}", allow_other_host: true
       end
-
-      # Store in session for subsequent requests
-      session[:api_key] = raw_key unless session[:api_key]
     end
 
     def set_project
       # For nested routes (errors, events), use :project_id
       # For member routes on projects (edit, setup, analytics), use :id
       project_id = params[:project_id] || (controller_name == "projects" ? params[:id] : nil)
-      return unless project_id.present?
 
-      # Use cached project from authenticate! if available, otherwise fetch
-      @project = @_cached_project if @_cached_project&.id&.to_s == project_id.to_s
-      @project ||= Project.find(project_id)
+      if project_id.present?
+        @project = Project.find(project_id)
 
-      # Skip authorization check in development (dev keys auto-match)
-      return if Rails.env.development?
+        # Skip authorization check in development
+        return if Rails.env.development?
 
-      # Verify the project matches the API key's project
-      if @api_key_info && @api_key_info[:project_id] != @project.platform_project_id
-        redirect_to dashboard_root_path, alert: "Project access denied"
+        # Verify the project matches the SSO session's project
+        if session[:platform_project_id] != @project.platform_project_id
+          redirect_to dashboard_root_path, alert: "Project access denied"
+        end
+      else
+        # Find or create project for the SSO session
+        @project = Project.find_or_create_for_platform!(
+          platform_project_id: session[:platform_project_id] || "dev_project",
+          name: session[:project_name] || "Development Project"
+        )
       end
     end
 
@@ -58,33 +52,8 @@ module Dashboard
       @project
     end
 
-    def extract_api_key
-      # Check session first, then params
-      session[:api_key] || params[:api_key]
-    end
-
-    def redirect_to_auth
-      if params[:api_key].present?
-        # Store in session and redirect without api_key in URL
-        session[:api_key] = params[:api_key]
-        redirect_to request.path
-      elsif Rails.env.development?
-        # In dev, auto-authenticate if accessing a specific project
-        project_id = params[:project_id] || params[:id]
-        if project_id.present?
-          project = Project.find_by(id: project_id)
-          if project
-            session[:api_key] = "dev_#{project.id}"
-            redirect_to request.path
-            return
-          end
-        end
-        # Otherwise redirect to create a new project
-        redirect_to new_dashboard_project_path
-      else
-        # Show auth required page
-        render "dashboard/auth_required", status: :unauthorized
-      end
+    def platform_url
+      ENV["BRAINZLAB_PLATFORM_EXTERNAL_URL"] || ENV["BRAINZLAB_PLATFORM_URL"] || "https://platform.brainzlab.ai"
     end
   end
 end
