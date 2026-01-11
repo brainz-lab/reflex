@@ -17,7 +17,13 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+# Worker processes need larger pools for Solid Queue threads + dispatcher
+worker: &worker
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("DB_POOL") { 10 } %>
 
 
 development:
@@ -66,7 +72,7 @@ production:
     url: <%= ENV.fetch("CACHE_DATABASE_URL") { ENV.fetch("DATABASE_URL", "").gsub(/reflex_production/, "reflex_production_cache").gsub(/reflex_pool/, "reflex_production_cache") } %>
     migrations_paths: db/cache_migrate
   queue:
-    <<: *default
+    <<: *worker
     url: <%= ENV.fetch("QUEUE_DATABASE_URL") { ENV.fetch("DATABASE_URL", "").gsub(/reflex_production/, "reflex_production_queue").gsub(/reflex_pool/, "reflex_production_queue") } %>
     migrations_paths: db/queue_migrate
   cable:
