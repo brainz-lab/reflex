@@ -55,5 +55,14 @@ module Dashboard
     def platform_url
       ENV["BRAINZLAB_PLATFORM_EXTERNAL_URL"] || ENV["BRAINZLAB_PLATFORM_URL"] || "https://platform.brainzlab.ai"
     end
+
+    # Build SSO URL with optional project_id
+    def sso_url_for_project(project_id)
+      base_url = "#{platform_url}/auth/sso"
+      params = { product: "reflex", return_to: dashboard_root_url }
+      params[:project_id] = project_id if project_id.present?
+      "#{base_url}?#{params.to_query}"
+    end
+    helper_method :sso_url_for_project
   end
 end

@@ -4,13 +4,9 @@ module Dashboard
     before_action :set_project, only: [ :show, :setup, :mcp_setup, :analytics, :edit, :update ]
 
     def index
-      if Rails.env.development?
-        # In dev, show all projects
-        @projects = Project.order(created_at: :desc)
-      else
-        # In production with SSO, show project for session
-        @projects = [ @project ].compact
-      end
+      # Show all projects that the user's organization has access to
+      # In production, the user can switch projects via SSO with project_id param
+      @projects = Project.order(created_at: :desc)
 
       # Preload counts to avoid N+1 queries
       project_ids = @projects.map(&:id)

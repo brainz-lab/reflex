@@ -19,9 +19,12 @@
   <% if @projects.any? %>
     <div class="grid gap-4">
       <% @projects.each do |project| %>
-        <%= link_to dashboard_project_errors_path(project),
-            class: "block rounded-2xl p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 group",
-            style: "background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);" do %>
+        <% # In production, switch projects via SSO. In development, link directly %>
+        <% is_current = session[:platform_project_id] == project.platform_project_id %>
+        <% project_url = is_current || Rails.env.development? ? dashboard_project_errors_path(project) : sso_url_for_project(project.platform_project_id) %>
+        <%= link_to project_url,
+            class: "block rounded-2xl p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 group #{is_current ? 'ring-2 ring-offset-2' : ''}",
+            style: "background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);#{is_current ? ' --tw-ring-color: var(--color-reflex);' : ''}" do %>
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%);">
@@ -30,7 +33,12 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-[16px] font-semibold" style="color: var(--color-ink-900);"><%= project.name %></h3>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-[16px] font-semibold" style="color: var(--color-ink-900);"><%= project.name %></h3>
+                  <% if is_current %>
+                    <span class="px-2 py-0.5 text-[11px] font-semibold rounded-full" style="background: var(--color-reflex-bg); color: var(--color-reflex);">Current</span>
+                  <% end %>
+                </div>
                 <p class="text-[13px] mt-0.5 font-medium" style="color: var(--color-ink-500);">
                   <%= project.environment || 'development' %>
                 </p>
