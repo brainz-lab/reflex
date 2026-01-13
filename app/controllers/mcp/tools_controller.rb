@@ -24,6 +24,7 @@ module Mcp
 
       case method
       when "initialize"
+        server_version = (Rails.application.config.version rescue "1.0.0")
         render json: {
           jsonrpc: "2.0",
           id: params[:id],
@@ -34,7 +35,7 @@ module Mcp
             },
             serverInfo: {
               name: "reflex",
-              version: Rails.application.config.version rescue "1.0.0"
+              version: server_version
             }
           }
         }
