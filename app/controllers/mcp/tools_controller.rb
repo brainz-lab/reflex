@@ -23,6 +23,25 @@ module Mcp
       params_data = params[:params] || {}
 
       case method
+      when "initialize"
+        render json: {
+          jsonrpc: "2.0",
+          id: params[:id],
+          result: {
+            protocolVersion: "2024-11-05",
+            capabilities: {
+              tools: { listChanged: false }
+            },
+            serverInfo: {
+              name: "reflex",
+              version: Rails.application.config.version rescue "1.0.0"
+            }
+          }
+        }
+      when "notifications/initialized", "initialized"
+        render json: { jsonrpc: "2.0", id: params[:id], result: {} }
+      when "ping"
+        render json: { jsonrpc: "2.0", id: params[:id], result: {} }
       when "tools/list"
         render json: {
           jsonrpc: "2.0",
@@ -58,17 +77,17 @@ module Mcp
 
     def authenticate!
       raw_key = extract_api_key
-      key_info = PlatformClient.validate_key(raw_key)
+      validation = PlatformClient.validate_key(raw_key)
 
-      unless key_info[:valid]
-        render json: { error: "Invalid API key" }, status: :unauthorized
+      unless validation.valid?
+        render json: { error: validation.error || "Invalid API key" }, status: :unauthorized
         return
       end
 
       @project = Project.find_or_create_for_platform!(
-        platform_project_id: key_info[:project_id],
-        name: key_info[:project_name],
-        environment: key_info[:environment] || "live"
+        platform_project_id: validation.project_id,
+        name: validation.project_slug,
+        environment: validation.environment || "live"
       )
     end
 
