@@ -65,9 +65,29 @@ module Dashboard
     end
 
     def setup
+      # Ensure API key exists for SDK setup
+      @api_key = @project.settings&.dig("api_key")
+
+      if @api_key.blank?
+        @project.settings ||= {}
+        @project.settings["api_key"] = "rfx_api_#{SecureRandom.hex(24)}"
+        @project.settings["ingest_key"] ||= "rfx_ingest_#{SecureRandom.hex(24)}"
+        @project.save!
+        @api_key = @project.settings["api_key"]
+      end
     end
 
     def mcp_setup
+      # Ensure API key exists for MCP access
+      @api_key = @project.settings&.dig("api_key")
+
+      if @api_key.blank?
+        @project.settings ||= {}
+        @project.settings["api_key"] = "rfx_api_#{SecureRandom.hex(24)}"
+        @project.settings["ingest_key"] ||= "rfx_ingest_#{SecureRandom.hex(24)}"
+        @project.save!
+        @api_key = @project.settings["api_key"]
+      end
     end
 
     def edit
