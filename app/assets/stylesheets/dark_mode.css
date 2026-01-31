@@ -464,6 +464,185 @@ html.dark .nav-item.active {
   color: var(--dm-text);
 }
 
+/* ============================================
+   Tailwind Utility Dark Mode Overrides
+   ============================================
+   These overrides fix hardcoded light-only colors in templates
+   by providing dark mode equivalents.
+*/
+
+/* Background color overrides */
+html.dark .bg-white {
+  background-color: var(--dm-surface) !important;
+}
+
+/* Checkbox/radio styling for dark mode */
+html.dark input[type="checkbox"],
+html.dark input[type="radio"] {
+  background-color: var(--dm-input-bg);
+  border-color: var(--dm-border);
+}
+
+html.dark input[type="checkbox"]:checked,
+html.dark input[type="radio"]:checked {
+  background-color: var(--color-reflex, #D97706);
+  border-color: var(--color-reflex, #D97706);
+}
+
+html.dark .border-gray-300 {
+  border-color: var(--dm-border) !important;
+}
+
+/* Text color overrides for hardcoded colors */
+html.dark .text-gray-50,
+html.dark .text-gray-100,
+html.dark .text-gray-200 {
+  color: var(--dm-text) !important;
+}
+
+html.dark .text-gray-300,
+html.dark .text-gray-400 {
+  color: var(--dm-text-secondary) !important;
+}
+
+html.dark .text-gray-500,
+html.dark .text-gray-600 {
+  color: var(--dm-text-muted) !important;
+}
+
+html.dark .text-gray-700,
+html.dark .text-gray-800,
+html.dark .text-gray-900 {
+  color: var(--dm-text) !important;
+}
+
+/* Stone color overrides (common in dashboards) */
+html.dark .text-stone-50,
+html.dark .text-stone-100,
+html.dark .text-stone-200 {
+  color: var(--dm-text) !important;
+}
+
+html.dark .text-stone-300,
+html.dark .text-stone-400 {
+  color: var(--dm-text-secondary) !important;
+}
+
+html.dark .text-stone-500,
+html.dark .text-stone-600 {
+  color: var(--dm-text-muted) !important;
+}
+
+html.dark .text-stone-700,
+html.dark .text-stone-800,
+html.dark .text-stone-900 {
+  color: var(--dm-text) !important;
+}
+
+/* Border color overrides */
+html.dark .border-gray-100,
+html.dark .border-gray-200 {
+  border-color: var(--dm-border-light) !important;
+}
+
+html.dark .border-gray-300,
+html.dark .border-gray-400 {
+  border-color: var(--dm-border) !important;
+}
+
+html.dark .border-stone-100,
+html.dark .border-stone-200 {
+  border-color: var(--dm-border-light) !important;
+}
+
+html.dark .border-stone-300,
+html.dark .border-stone-400 {
+  border-color: var(--dm-border) !important;
+}
+
+/* Divide color overrides */
+html.dark .divide-y > * + * {
+  border-color: var(--dm-border-light);
+}
+
+/* ============================================
+   Hardcoded Inline Style Overrides
+   ============================================
+   These override specific hardcoded hex colors found in templates
+*/
+
+/* Override #FFFFFE and #FFFFFF backgrounds */
+html.dark [style*="background: #FFFFFE"],
+html.dark [style*="background:#FFFFFE"],
+html.dark [style*="background: #FFFFFF"],
+html.dark [style*="background:#FFFFFF"] {
+  background-color: var(--dm-surface) !important;
+}
+
+/* Override #E8E5E0 borders (light cream border) */
+html.dark [style*="border: 1px solid #E8E5E0"],
+html.dark [style*="border:1px solid #E8E5E0"],
+html.dark [style*="border-color: #E8E5E0"],
+html.dark [style*="border-color:#E8E5E0"] {
+  border-color: var(--dm-border) !important;
+}
+
+/* Override #F0EFED borders (lighter cream border) */
+html.dark [style*="border: 1px solid #F0EFED"],
+html.dark [style*="border:1px solid #F0EFED"],
+html.dark [style*="border-bottom: 1px solid #F0EFED"],
+html.dark [style*="border-color: #F0EFED"],
+html.dark [style*="border-color:#F0EFED"] {
+  border-color: var(--dm-border-light) !important;
+}
+
+/* Override #1A1A1A text (dark text on light bg) */
+html.dark [style*="color: #1A1A1A"],
+html.dark [style*="color:#1A1A1A"] {
+  color: var(--dm-text) !important;
+}
+
+/* Override #6B6760 text (secondary/muted text) */
+html.dark [style*="color: #6B6760"],
+html.dark [style*="color:#6B6760"] {
+  color: var(--dm-text-secondary) !important;
+}
+
+/* Override #8B8780 text (muted text) */
+html.dark [style*="color: #8B8780"],
+html.dark [style*="color:#8B8780"] {
+  color: var(--dm-text-muted) !important;
+}
+
+/* Override #A19F9A text (subtle/disabled text) */
+html.dark [style*="color: #A19F9A"],
+html.dark [style*="color:#A19F9A"] {
+  color: var(--dm-text-placeholder) !important;
+}
+
+/* Override #F0EFED backgrounds (light surface) */
+html.dark [style*="background: #F0EFED"],
+html.dark [style*="background:#F0EFED"] {
+  background-color: var(--dm-surface-alt) !important;
+}
+
+/* Session Timeline specific overrides */
+html.dark [style*="background: #E8E5E0"] {
+  background-color: var(--dm-border) !important;
+}
+
+/* Cards/containers with light backgrounds in analytics */
+html.dark .divide-y[style*="border-color: #F0EFED"] > * + * {
+  border-color: var(--dm-border-light) !important;
+}
+
+/* Progress bars background */
+html.dark [style*="background: #F0EFED"].h-1,
+html.dark [style*="background: #F0EFED"].h-1\.5,
+html.dark [style*="background: #F0EFED"].h-2 {
+  background-color: var(--dm-surface-alt) !important;
+}
+
 /* Scrollbar styling for dark mode */
 html.dark ::-webkit-scrollbar {
   width: 8px;
