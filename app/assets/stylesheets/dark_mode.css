@@ -1,0 +1,352 @@
+/*
+ * Dark Mode CSS Variables
+ * Uses brainzlab-ui dark mode tokens
+ */
+
+:root {
+  /* Light theme (default) */
+  --dm-bg: #FAF9F7;
+  --dm-surface: #FFFFFE;
+  --dm-surface-light: #F7F6F4;
+  --dm-surface-hover: #F0EFED;
+  --dm-text: #1A1A1A;
+  --dm-text-muted: #6B6760;
+  --dm-text-subtle: #8B8780;
+  --dm-text-disabled: #A19F9A;
+  --dm-border: #E8E5E0;
+  --dm-border-light: #F0EFED;
+
+  /* Semantic colors - light */
+  --dm-code-bg: #1A1A1A;
+  --dm-code-text: #E8E5E0;
+  --dm-input-bg: #FFFFFE;
+  --dm-input-border: #E8E5E0;
+  --dm-input-focus-ring: var(--color-reflex);
+
+  /* Shadows - light */
+  --dm-shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --dm-shadow-md: 0 4px 6px rgba(0,0,0,0.06);
+  --dm-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* Dark theme */
+html.dark {
+  --dm-bg: #121212;
+  --dm-surface: #1e1e1e;
+  --dm-surface-light: #2a2a2a;
+  --dm-surface-hover: #333333;
+  --dm-text: #e8e1d7;
+  --dm-text-muted: #a0a0a0;
+  --dm-text-subtle: #888888;
+  --dm-text-disabled: #666666;
+  --dm-border: #333333;
+  --dm-border-light: #2a2a2a;
+
+  /* Semantic colors - dark */
+  --dm-code-bg: #0d0d0d;
+  --dm-code-text: #e8e1d7;
+  --dm-input-bg: #2a2a2a;
+  --dm-input-border: #333333;
+  --dm-input-focus-ring: var(--color-reflex);
+
+  /* Shadows - dark */
+  --dm-shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --dm-shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+  --dm-shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+
+  /* Override cream colors for dark mode */
+  --color-cream-50: #1e1e1e;
+  --color-cream-100: #2a2a2a;
+  --color-cream-200: #333333;
+  --color-cream-300: #444444;
+
+  /* Override ink colors for dark mode */
+  --color-ink-300: #666666;
+  --color-ink-400: #888888;
+  --color-ink-500: #a0a0a0;
+  --color-ink-600: #b8b8b8;
+  --color-ink-700: #cccccc;
+  --color-ink-800: #dddddd;
+  --color-ink-900: #e8e1d7;
+  --color-ink-950: #f0eae0;
+}
+
+/* System preference detection (when no user preference is set) */
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) {
+    --dm-bg: #121212;
+    --dm-surface: #1e1e1e;
+    --dm-surface-light: #2a2a2a;
+    --dm-surface-hover: #333333;
+    --dm-text: #e8e1d7;
+    --dm-text-muted: #a0a0a0;
+    --dm-text-subtle: #888888;
+    --dm-text-disabled: #666666;
+    --dm-border: #333333;
+    --dm-border-light: #2a2a2a;
+
+    --dm-code-bg: #0d0d0d;
+    --dm-code-text: #e8e1d7;
+    --dm-input-bg: #2a2a2a;
+    --dm-input-border: #333333;
+
+    --dm-shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --dm-shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+    --dm-shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+
+    --color-cream-50: #1e1e1e;
+    --color-cream-100: #2a2a2a;
+    --color-cream-200: #333333;
+    --color-cream-300: #444444;
+
+    --color-ink-300: #666666;
+    --color-ink-400: #888888;
+    --color-ink-500: #a0a0a0;
+    --color-ink-600: #b8b8b8;
+    --color-ink-700: #cccccc;
+    --color-ink-800: #dddddd;
+    --color-ink-900: #e8e1d7;
+    --color-ink-950: #f0eae0;
+  }
+}
+
+/* ==========================================================================
+   Utility Classes for Dark Mode
+   ========================================================================== */
+
+/* Background utilities */
+.dm-bg { background-color: var(--dm-bg); }
+.dm-bg-surface { background-color: var(--dm-surface); }
+.dm-bg-surface-light { background-color: var(--dm-surface-light); }
+.dm-bg-surface-hover { background-color: var(--dm-surface-hover); }
+
+/* Text utilities */
+.dm-text { color: var(--dm-text); }
+.dm-text-muted { color: var(--dm-text-muted); }
+.dm-text-subtle { color: var(--dm-text-subtle); }
+.dm-text-disabled { color: var(--dm-text-disabled); }
+
+/* Border utilities */
+.dm-border { border-color: var(--dm-border); }
+.dm-border-light { border-color: var(--dm-border-light); }
+
+/* Code block styling */
+.dm-code-block {
+  background-color: var(--dm-code-bg);
+  color: var(--dm-code-text);
+}
+
+/* Card/panel styling */
+.dm-card {
+  background-color: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  box-shadow: var(--dm-shadow-sm);
+}
+
+/* Input styling */
+.dm-input {
+  background-color: var(--dm-input-bg);
+  border: 1px solid var(--dm-input-border);
+  color: var(--dm-text);
+}
+
+.dm-input:focus {
+  border-color: var(--dm-input-focus-ring);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+}
+
+/* Sidebar styling */
+.dm-sidebar {
+  background-color: var(--dm-surface);
+  border-right: 1px solid var(--dm-border);
+}
+
+/* Hover effects */
+.dm-hover:hover {
+  background-color: var(--dm-surface-hover);
+}
+
+/* ==========================================================================
+   Dark Mode Toggle Button Styles
+   ========================================================================== */
+
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid var(--dm-border);
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark-mode-toggle:hover {
+  background-color: var(--dm-surface-light);
+  color: var(--dm-text);
+}
+
+.dark-mode-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Sun icon (shown in dark mode) */
+.dark-mode-toggle .icon-sun {
+  display: none;
+}
+
+/* Moon icon (shown in light mode) */
+.dark-mode-toggle .icon-moon {
+  display: block;
+}
+
+html.dark .dark-mode-toggle .icon-sun {
+  display: block;
+}
+
+html.dark .dark-mode-toggle .icon-moon {
+  display: none;
+}
+
+/* System preference indicator */
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) .dark-mode-toggle .icon-sun {
+    display: block;
+  }
+  html:not(.light):not(.dark) .dark-mode-toggle .icon-moon {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Component-specific Dark Mode Overrides
+   ========================================================================== */
+
+/* Navigation items */
+html.dark .nav-item {
+  color: var(--dm-text-muted);
+}
+
+html.dark .nav-item:hover,
+html.dark .nav-item.active {
+  background-color: var(--dm-surface-light);
+  color: var(--dm-text);
+}
+
+/* Alerts */
+html.dark .alert-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+html.dark .alert-error {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+/* Charts - adjust for dark mode */
+html.dark canvas {
+  filter: none;
+}
+
+/* Scrollbar styling for dark mode */
+html.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: var(--dm-surface);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--dm-border);
+  border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+/* Selection styling */
+html.dark ::selection {
+  background-color: rgba(217, 119, 6, 0.3);
+  color: #e8e1d7;
+}
+
+/* Form elements in dark mode */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: var(--dm-input-bg);
+  border-color: var(--dm-input-border);
+  color: var(--dm-text);
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--dm-text-disabled);
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  border-color: var(--color-reflex);
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+}
+
+/* Checkbox styling */
+html.dark input[type="checkbox"] {
+  accent-color: var(--color-reflex);
+}
+
+/* Buttons in dark mode */
+html.dark button.dm-btn-secondary,
+html.dark a.dm-btn-secondary {
+  background-color: var(--dm-surface-light);
+  border-color: var(--dm-border);
+  color: var(--dm-text);
+}
+
+html.dark button.dm-btn-secondary:hover,
+html.dark a.dm-btn-secondary:hover {
+  background-color: var(--dm-surface-hover);
+}
+
+/* Tooltip styling */
+html.dark [data-tooltip] {
+  --tooltip-bg: var(--dm-surface);
+  --tooltip-text: var(--dm-text);
+  --tooltip-border: var(--dm-border);
+}
+
+/* Status badges */
+html.dark .status-unresolved {
+  background-color: rgba(217, 119, 6, 0.2);
+  color: #fbbf24;
+}
+
+html.dark .status-resolved {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+html.dark .status-ignored {
+  background-color: var(--dm-surface-light);
+  color: var(--dm-text-muted);
+}
+
+/* Transition for smooth theme switching */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
