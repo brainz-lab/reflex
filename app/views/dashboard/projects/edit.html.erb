@@ -1,97 +1,95 @@
 <div class="space-y-8">
   <!-- Header -->
   <div>
-    <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Project Settings</h1>
-    <p class="text-[14px] mt-1" style="color: #8B8780;">Configure your project settings and preferences</p>
+    <h1 class="text-[22px] font-semibold tracking-tight dm-text">Project Settings</h1>
+    <p class="text-[14px] mt-1 dm-text-subtle">Configure your project settings and preferences</p>
   </div>
 
   <%= form_with model: @project, url: dashboard_project_path(@project), method: :patch, class: "space-y-6" do |f| %>
     <!-- General Settings -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">General</h2>
+    <div class="rounded-xl overflow-hidden dm-card">
+      <div class="px-5 py-4" style="border-bottom: 1px solid var(--dm-border-light);">
+        <h2 class="text-[14px] font-semibold dm-text">General</h2>
       </div>
       <div class="p-5 space-y-5">
         <!-- Project Name -->
         <div>
-          <label for="project_name" class="block text-[13px] font-medium mb-1.5" style="color: #6B6760;">Project Name</label>
+          <label for="project_name" class="block text-[13px] font-medium mb-1.5 dm-text-muted">Project Name</label>
           <%= f.text_field :name,
-              class: "w-full px-3 py-2 rounded-lg text-[14px] outline-none transition-colors",
-              style: "background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;",
+              class: "w-full px-3 py-2 rounded-lg text-[14px] outline-none transition-colors dm-input",
               placeholder: "My Project" %>
         </div>
 
         <!-- Environment -->
         <div>
-          <label for="project_environment" class="block text-[13px] font-medium mb-1.5" style="color: #6B6760;">Environment</label>
+          <label for="project_environment" class="block text-[13px] font-medium mb-1.5 dm-text-muted">Environment</label>
           <%= f.select :environment,
               [['Live', 'live'], ['Test', 'test'], ['Development', 'development']],
               {},
-              class: "w-full px-3 py-2 rounded-lg text-[14px] outline-none transition-colors",
-              style: "background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;" %>
+              class: "w-full px-3 py-2 rounded-lg text-[14px] outline-none transition-colors dm-input" %>
         </div>
       </div>
     </div>
 
     <!-- Project Info (Read-only) -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Project Information</h2>
+    <div class="rounded-xl overflow-hidden dm-card">
+      <div class="px-5 py-4" style="border-bottom: 1px solid var(--dm-border-light);">
+        <h2 class="text-[14px] font-semibold dm-text">Project Information</h2>
       </div>
       <div class="p-5 space-y-4">
-        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid #F0EFED;">
-          <span class="text-[13px]" style="color: #6B6760;">Project ID</span>
-          <span class="text-[13px] font-mono" style="color: #1A1A1A;"><%= @project.id %></span>
+        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--dm-border-light);">
+          <span class="text-[13px] dm-text-muted">Project ID</span>
+          <span class="text-[13px] font-mono dm-text"><%= @project.id %></span>
         </div>
-        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid #F0EFED;">
-          <span class="text-[13px]" style="color: #6B6760;">Platform Project ID</span>
-          <span class="text-[13px] font-mono" style="color: #1A1A1A;"><%= @project.platform_project_id %></span>
+        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--dm-border-light);">
+          <span class="text-[13px] dm-text-muted">Platform Project ID</span>
+          <span class="text-[13px] font-mono dm-text"><%= @project.platform_project_id %></span>
         </div>
-        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid #F0EFED;">
-          <span class="text-[13px]" style="color: #6B6760;">Total Errors</span>
-          <span class="text-[13px] font-semibold" style="color: #1A1A1A;"><%= @project.error_count %></span>
+        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--dm-border-light);">
+          <span class="text-[13px] dm-text-muted">Total Errors</span>
+          <span class="text-[13px] font-semibold dm-text"><%= @project.error_count %></span>
         </div>
-        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid #F0EFED;">
-          <span class="text-[13px]" style="color: #6B6760;">Total Events</span>
-          <span class="text-[13px] font-semibold" style="color: #1A1A1A;"><%= @project.event_count %></span>
+        <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--dm-border-light);">
+          <span class="text-[13px] dm-text-muted">Total Events</span>
+          <span class="text-[13px] font-semibold dm-text"><%= @project.event_count %></span>
         </div>
         <div class="flex justify-between items-center py-2">
-          <span class="text-[13px]" style="color: #6B6760;">Created</span>
-          <span class="text-[13px]" style="color: #1A1A1A;"><%= @project.created_at.strftime('%b %d, %Y at %H:%M') %></span>
+          <span class="text-[13px] dm-text-muted">Created</span>
+          <span class="text-[13px] dm-text"><%= @project.created_at.strftime('%b %d, %Y at %H:%M') %></span>
         </div>
       </div>
     </div>
 
     <!-- Notifications Settings -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Notifications</h2>
+    <div class="rounded-xl overflow-hidden dm-card">
+      <div class="px-5 py-4" style="border-bottom: 1px solid var(--dm-border-light);">
+        <h2 class="text-[14px] font-semibold dm-text">Notifications</h2>
       </div>
       <div class="p-5 space-y-4">
         <label class="flex items-center justify-between cursor-pointer">
           <div>
-            <p class="text-[13px] font-medium" style="color: #1A1A1A;">Email Notifications</p>
-            <p class="text-[12px] mt-0.5" style="color: #8B8780;">Receive email alerts for new errors</p>
+            <p class="text-[13px] font-medium dm-text">Email Notifications</p>
+            <p class="text-[12px] mt-0.5 dm-text-subtle">Receive email alerts for new errors</p>
           </div>
           <input type="checkbox" name="project[settings][email_notifications]" value="1"
                  <%= @project.settings&.dig('email_notifications') ? 'checked' : '' %>
                  class="w-5 h-5 rounded border-gray-300 text-red-500 focus:ring-red-500">
         </label>
 
-        <label class="flex items-center justify-between cursor-pointer" style="border-top: 1px solid #F0EFED; padding-top: 1rem;">
+        <label class="flex items-center justify-between cursor-pointer" style="border-top: 1px solid var(--dm-border-light); padding-top: 1rem;">
           <div>
-            <p class="text-[13px] font-medium" style="color: #1A1A1A;">Slack Notifications</p>
-            <p class="text-[12px] mt-0.5" style="color: #8B8780;">Send error alerts to Slack</p>
+            <p class="text-[13px] font-medium dm-text">Slack Notifications</p>
+            <p class="text-[12px] mt-0.5 dm-text-subtle">Send error alerts to Slack</p>
           </div>
           <input type="checkbox" name="project[settings][slack_notifications]" value="1"
                  <%= @project.settings&.dig('slack_notifications') ? 'checked' : '' %>
                  class="w-5 h-5 rounded border-gray-300 text-red-500 focus:ring-red-500">
         </label>
 
-        <label class="flex items-center justify-between cursor-pointer" style="border-top: 1px solid #F0EFED; padding-top: 1rem;">
+        <label class="flex items-center justify-between cursor-pointer" style="border-top: 1px solid var(--dm-border-light); padding-top: 1rem;">
           <div>
-            <p class="text-[13px] font-medium" style="color: #1A1A1A;">Webhook Notifications</p>
-            <p class="text-[12px] mt-0.5" style="color: #8B8780;">Send error data to a webhook URL</p>
+            <p class="text-[13px] font-medium dm-text">Webhook Notifications</p>
+            <p class="text-[12px] mt-0.5 dm-text-subtle">Send error data to a webhook URL</p>
           </div>
           <input type="checkbox" name="project[settings][webhook_notifications]" value="1"
                  <%= @project.settings&.dig('webhook_notifications') ? 'checked' : '' %>
@@ -101,46 +99,44 @@
     </div>
 
     <!-- Alert Rules -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #E8E5E0;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #F0EFED;">
-        <h2 class="text-[14px] font-semibold" style="color: #1A1A1A;">Alert Rules</h2>
+    <div class="rounded-xl overflow-hidden dm-card">
+      <div class="px-5 py-4" style="border-bottom: 1px solid var(--dm-border-light);">
+        <h2 class="text-[14px] font-semibold dm-text">Alert Rules</h2>
       </div>
       <div class="p-5 space-y-4">
         <div>
-          <label class="block text-[13px] font-medium mb-1.5" style="color: #6B6760;">Alert on new errors</label>
+          <label class="block text-[13px] font-medium mb-1.5 dm-text-muted">Alert on new errors</label>
           <select name="project[settings][alert_on_new]"
-                  class="w-full px-3 py-2 rounded-lg text-[14px] outline-none"
-                  style="background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;">
+                  class="w-full px-3 py-2 rounded-lg text-[14px] outline-none dm-input">
             <option value="always" <%= @project.settings&.dig('alert_on_new') == 'always' ? 'selected' : '' %>>Always</option>
             <option value="first_time" <%= @project.settings&.dig('alert_on_new') == 'first_time' ? 'selected' : '' %>>First occurrence only</option>
             <option value="never" <%= @project.settings&.dig('alert_on_new') == 'never' ? 'selected' : '' %>>Never</option>
           </select>
         </div>
 
-        <div style="border-top: 1px solid #F0EFED; padding-top: 1rem;">
-          <label class="block text-[13px] font-medium mb-1.5" style="color: #6B6760;">Alert threshold</label>
+        <div style="border-top: 1px solid var(--dm-border-light); padding-top: 1rem;">
+          <label class="block text-[13px] font-medium mb-1.5 dm-text-muted">Alert threshold</label>
           <select name="project[settings][alert_threshold]"
-                  class="w-full px-3 py-2 rounded-lg text-[14px] outline-none"
-                  style="background: #FFFFFE; border: 1px solid #E8E5E0; color: #1A1A1A;">
+                  class="w-full px-3 py-2 rounded-lg text-[14px] outline-none dm-input">
             <option value="1" <%= @project.settings&.dig('alert_threshold') == '1' ? 'selected' : '' %>>Every occurrence</option>
             <option value="10" <%= @project.settings&.dig('alert_threshold') == '10' ? 'selected' : '' %>>Every 10 occurrences</option>
             <option value="100" <%= @project.settings&.dig('alert_threshold') == '100' ? 'selected' : '' %>>Every 100 occurrences</option>
           </select>
-          <p class="text-[11px] mt-1" style="color: #A19F9A;">For recurring errors, only alert after this many occurrences</p>
+          <p class="text-[11px] mt-1 dm-text-disabled">For recurring errors, only alert after this many occurrences</p>
         </div>
       </div>
     </div>
 
     <!-- Danger Zone -->
-    <div class="rounded-xl overflow-hidden" style="background: #FFFFFE; border: 1px solid #FEEBE7;">
-      <div class="px-5 py-4" style="border-bottom: 1px solid #FEEBE7; background: #FEF8F7;">
+    <div class="rounded-xl overflow-hidden" style="background: var(--dm-surface); border: 1px solid #FEEBE7;">
+      <div class="px-5 py-4" style="border-bottom: 1px solid #FEEBE7; background: rgba(254, 235, 231, 0.5);">
         <h2 class="text-[14px] font-semibold" style="color: #CD2B31;">Danger Zone</h2>
       </div>
       <div class="p-5 space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-[13px] font-medium" style="color: #1A1A1A;">Clear all error data</p>
-            <p class="text-[12px] mt-0.5" style="color: #8B8780;">Permanently delete all errors and events for this project</p>
+            <p class="text-[13px] font-medium dm-text">Clear all error data</p>
+            <p class="text-[12px] mt-0.5 dm-text-subtle">Permanently delete all errors and events for this project</p>
           </div>
           <button type="button"
                   onclick="if(confirm('Are you sure you want to delete all error data? This cannot be undone.')) { alert('This feature is not yet implemented'); }"
@@ -155,11 +151,10 @@
     <!-- Submit -->
     <div class="flex justify-end gap-3">
       <%= link_to 'Cancel', dashboard_project_errors_path(@project),
-          class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors",
-          style: "background: #F0EFED; color: #6B6760;" %>
+          class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors dm-bg-surface-light dm-text-muted dm-hover" %>
       <%= f.submit 'Save Settings',
           class: "px-4 py-2 text-[13px] font-medium rounded-lg transition-colors cursor-pointer",
-          style: "background: #1A1A1A; color: #FFFFFE;" %>
+          style: "background: var(--dm-text); color: var(--dm-bg);" %>
     </div>
   <% end %>
 </div>

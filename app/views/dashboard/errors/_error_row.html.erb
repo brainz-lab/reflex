@@ -1,6 +1,6 @@
 <%= link_to dashboard_project_error_path(@project, error),
-    class: "block px-6 py-5 transition-all hover:bg-[var(--color-cream-50)] group",
-    style: local_assigns[:last] ? "" : "border-bottom: 1px solid var(--color-cream-200);" do %>
+    class: "block px-6 py-5 transition-all dm-hover group",
+    style: local_assigns[:last] ? "" : "border-bottom: 1px solid var(--dm-border);" do %>
   <div class="flex items-start gap-4">
     <!-- Status indicator -->
     <div class="mt-1.5">
@@ -10,7 +10,7 @@
       <% when 'resolved' %>
         <span class="w-2.5 h-2.5 rounded-full block" style="background: var(--color-success);"></span>
       <% when 'ignored' %>
-        <span class="w-2.5 h-2.5 rounded-full block" style="background: var(--color-ink-300);"></span>
+        <span class="w-2.5 h-2.5 rounded-full block dm-bg-surface-hover"></span>
       <% end %>
     </div>
 
@@ -19,31 +19,31 @@
       <div class="flex items-center gap-2.5">
         <span class="text-[14px] font-semibold group-hover:underline" style="color: var(--color-reflex);"><%= error.error_class %></span>
         <% if error.location %>
-          <span class="text-[12px]" style="color: var(--color-cream-300);">|</span>
-          <span class="text-[13px] truncate font-mono" style="color: var(--color-ink-400);"><%= error.location %></span>
+          <span class="text-[12px] dm-text-disabled">|</span>
+          <span class="text-[13px] truncate font-mono dm-text-disabled"><%= error.location %></span>
         <% end %>
       </div>
-      <p class="text-[14px] truncate mt-1.5" style="color: var(--color-ink-600);"><%= error.short_message %></p>
-      <div class="flex items-center gap-3 mt-3 text-[12px] font-medium" style="color: var(--color-ink-400);">
+      <p class="text-[14px] truncate mt-1.5 dm-text-muted"><%= error.short_message %></p>
+      <div class="flex items-center gap-3 mt-3 text-[12px] font-medium dm-text-disabled">
         <span class="flex items-center gap-1">
           <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
           </svg>
           <%= error.event_count %> events
         </span>
-        <span style="color: var(--color-cream-300);">|</span>
+        <span class="dm-text-disabled">|</span>
         <span><%= time_ago_in_words(error.last_seen_at) %> ago</span>
         <% if error.last_commit %>
-          <span style="color: var(--color-cream-300);">|</span>
-          <span class="font-mono px-2 py-0.5 rounded-md" style="background: var(--color-cream-100); color: var(--color-ink-500);"><%= error.last_commit[0..6] %></span>
+          <span class="dm-text-disabled">|</span>
+          <span class="font-mono px-2 py-0.5 rounded-md dm-bg-surface-light dm-text-muted"><%= error.last_commit[0..6] %></span>
         <% end %>
       </div>
     </div>
 
     <!-- Event count badge -->
     <div class="text-right flex flex-col items-end gap-1">
-      <span class="text-[20px] font-bold tabular-nums" style="color: var(--color-ink-300);"><%= error.event_count %></span>
-      <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--color-ink-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <span class="text-[20px] font-bold tabular-nums dm-text-disabled"><%= error.event_count %></span>
+      <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity dm-text-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
       </svg>
     </div>

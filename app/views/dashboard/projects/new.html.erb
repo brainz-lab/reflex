@@ -1,19 +1,19 @@
 <div class="max-w-md mx-auto mt-12">
   <div class="text-center mb-8">
-    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 shadow-sm" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%);">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5 shadow-sm" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--dm-surface-light) 100%);">
       <svg width="26" height="26" viewBox="0 0 20 20" fill="none">
         <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="var(--color-reflex)"/>
       </svg>
     </div>
-    <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-ink-900);">
+    <h1 class="text-[24px] font-semibold tracking-tight dm-text">
       <%= Rails.env.development? ? 'Create a Project' : 'Connect a Project' %>
     </h1>
-    <p class="mt-2.5 text-[15px]" style="color: var(--color-ink-500);">
+    <p class="mt-2.5 text-[15px] dm-text-muted">
       <%= Rails.env.development? ? 'Create a new project to start tracking errors' : 'Enter your API key to start tracking errors' %>
     </p>
   </div>
 
-  <div class="rounded-2xl p-6" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+  <div class="rounded-2xl p-6 dm-card">
     <% if flash[:alert] %>
       <div class="mb-6 px-4 py-3 rounded-xl text-[13px] font-medium flex items-center gap-2" style="background: var(--color-error-bg); color: var(--color-error);">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,20 +26,18 @@
     <% if Rails.env.development? %>
       <%= form_with model: @project, url: dashboard_projects_path, method: :post, class: "space-y-5" do |f| %>
         <div>
-          <label for="project_name" class="block text-[13px] font-semibold mb-2" style="color: var(--color-ink-800);">Project Name</label>
+          <label for="project_name" class="block text-[13px] font-semibold mb-2 dm-text">Project Name</label>
           <input type="text" name="project[name]" id="project_name"
                  value="<%= @project.name %>"
                  placeholder="My App"
                  autocomplete="off"
-                 class="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-0"
-                 style="background: var(--color-cream-50); border: 1px solid var(--color-cream-200); color: var(--color-ink-900); --tw-ring-color: var(--color-reflex);">
+                 class="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-0 dm-input">
         </div>
 
         <div>
-          <label for="project_environment" class="block text-[13px] font-semibold mb-2" style="color: var(--color-ink-800);">Environment</label>
+          <label for="project_environment" class="block text-[13px] font-semibold mb-2 dm-text">Environment</label>
           <select name="project[environment]" id="project_environment"
-                  class="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-0"
-                  style="background: var(--color-cream-50); border: 1px solid var(--color-cream-200); color: var(--color-ink-900); --tw-ring-color: var(--color-reflex);">
+                  class="w-full px-4 py-3 rounded-xl text-[14px] transition-all focus:outline-none focus:ring-2 focus:ring-offset-0 dm-input">
             <option value="development" <%= 'selected' if @project.environment == 'development' %>>Development</option>
             <option value="staging" <%= 'selected' if @project.environment == 'staging' %>>Staging</option>
             <option value="production" <%= 'selected' if @project.environment == 'production' %>>Production</option>
@@ -55,13 +53,12 @@
     <% else %>
       <%= form_with url: dashboard_projects_path, method: :post, class: "space-y-5" do |f| %>
         <div>
-          <label for="api_key" class="block text-[13px] font-semibold mb-2" style="color: var(--color-ink-800);">API Key</label>
+          <label for="api_key" class="block text-[13px] font-semibold mb-2 dm-text">API Key</label>
           <input type="text" name="api_key" id="api_key"
                  placeholder="rfx_..."
                  autocomplete="off"
-                 class="w-full px-4 py-3 rounded-xl text-[14px] font-mono transition-all focus:outline-none focus:ring-2 focus:ring-offset-0"
-                 style="background: var(--color-cream-50); border: 1px solid var(--color-cream-200); color: var(--color-ink-900); --tw-ring-color: var(--color-reflex);">
-          <p class="mt-2.5 text-[13px]" style="color: var(--color-ink-500);">
+                 class="w-full px-4 py-3 rounded-xl text-[14px] font-mono transition-all focus:outline-none focus:ring-2 focus:ring-offset-0 dm-input">
+          <p class="mt-2.5 text-[13px] dm-text-muted">
             Get your API key from the
             <a href="https://platform.brainzlab.ai" target="_blank" class="font-medium hover:underline" style="color: var(--color-reflex);">Brainz Lab Platform</a>
           </p>
@@ -74,8 +71,8 @@
         </button>
       <% end %>
 
-      <div class="mt-6 pt-6 text-center" style="border-top: 1px solid var(--color-cream-200);">
-        <p class="text-[13px]" style="color: var(--color-ink-500);">
+      <div class="mt-6 pt-6 text-center" style="border-top: 1px solid var(--dm-border);">
+        <p class="text-[13px] dm-text-muted">
           Don't have an account?
           <a href="https://platform.brainzlab.ai/signup" target="_blank" class="font-medium hover:underline" style="color: var(--color-reflex);">Sign up for free</a>
         </p>

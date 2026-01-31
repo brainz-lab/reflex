@@ -1,35 +1,35 @@
 <div class="max-w-2xl space-y-8">
   <div>
-    <h1 class="text-[22px] font-semibold tracking-tight" style="color: #1A1A1A;">Setup Guide</h1>
-    <p class="mt-2 text-[15px]" style="color: #6B6760;">Get started tracking errors with Reflex in a few minutes.</p>
+    <h1 class="text-[22px] font-semibold tracking-tight dm-text">Setup Guide</h1>
+    <p class="mt-2 text-[15px] dm-text-muted">Get started tracking errors with Reflex in a few minutes.</p>
   </div>
 
   <!-- Step 1 -->
   <div class="space-y-4">
     <div class="flex items-center gap-3">
-      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: #1A1A1A; color: #FFFFFE;">1</span>
-      <h2 class="text-[16px] font-medium" style="color: #1A1A1A;">Add the gem to your Gemfile</h2>
+      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: var(--dm-text); color: var(--dm-bg);">1</span>
+      <h2 class="text-[16px] font-medium dm-text">Add the gem to your Gemfile</h2>
     </div>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code>gem 'brainzlab-sdk'</code></pre>
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code>gem 'brainzlab-sdk'</code></pre>
       <button data-action="click->clipboard#copy" data-clipboard-target="source" data-copy="gem 'brainzlab-sdk'"
               class="px-3 py-1.5 text-[12px] font-medium rounded-md transition-all opacity-0 group-hover:opacity-100"
               style="position: absolute; top: 12px; right: 12px; background: #3A3A3A; color: #E8E5E0; border: 1px solid #4A4A4A;">
         Copy
       </button>
     </div>
-    <p class="text-[14px]" style="color: #8B8780;">Then run <code class="px-1.5 py-0.5 rounded text-[13px]" style="background: #F5F3F0;">bundle install</code></p>
+    <p class="text-[14px] dm-text-subtle">Then run <code class="px-1.5 py-0.5 rounded text-[13px] dm-bg-surface-light dm-text">bundle install</code></p>
   </div>
 
   <!-- Step 2 -->
   <div class="space-y-4">
     <div class="flex items-center gap-3">
-      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: #1A1A1A; color: #FFFFFE;">2</span>
-      <h2 class="text-[16px] font-medium" style="color: #1A1A1A;">Create an initializer</h2>
+      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: var(--dm-text); color: var(--dm-bg);">2</span>
+      <h2 class="text-[16px] font-medium dm-text">Create an initializer</h2>
     </div>
-    <p class="text-[14px]" style="color: #6B6760;">Create <code class="px-1.5 py-0.5 rounded text-[13px]" style="background: #F5F3F0;">config/initializers/reflex.rb</code></p>
+    <p class="text-[14px] dm-text-muted">Create <code class="px-1.5 py-0.5 rounded text-[13px] dm-bg-surface-light dm-text">config/initializers/reflex.rb</code></p>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code>BrainzLab::Reflex.configure do |config|
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code>BrainzLab::Reflex.configure do |config|
   config.key = ENV['REFLEX_KEY']
   config.url = '<%= request.base_url %>'
 end</code></pre>
@@ -48,12 +48,12 @@ end"
   <!-- Step 3 -->
   <div class="space-y-4">
     <div class="flex items-center gap-3">
-      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: #1A1A1A; color: #FFFFFE;">3</span>
-      <h2 class="text-[16px] font-medium" style="color: #1A1A1A;">Set your environment variable</h2>
+      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: var(--dm-text); color: var(--dm-bg);">3</span>
+      <h2 class="text-[16px] font-medium dm-text">Set your environment variable</h2>
     </div>
-    <p class="text-[14px]" style="color: #6B6760;">Add your API key to your environment:</p>
+    <p class="text-[14px] dm-text-muted">Add your API key to your environment:</p>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code>REFLEX_KEY=<%= @api_key %></code></pre>
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code>REFLEX_KEY=<%= @api_key %></code></pre>
       <button data-action="click->clipboard#copy" data-clipboard-target="source"
               data-copy="REFLEX_KEY=<%= @api_key %>"
               class="px-3 py-1.5 text-[12px] font-medium rounded-md transition-all opacity-0 group-hover:opacity-100"
@@ -66,13 +66,13 @@ end"
   <!-- Step 4 -->
   <div class="space-y-4">
     <div class="flex items-center gap-3">
-      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: #1A1A1A; color: #FFFFFE;">4</span>
-      <h2 class="text-[16px] font-medium" style="color: #1A1A1A;">Start capturing errors</h2>
+      <span class="flex items-center justify-center w-7 h-7 rounded-full text-[13px] font-semibold" style="background: var(--dm-text); color: var(--dm-bg);">4</span>
+      <h2 class="text-[16px] font-medium dm-text">Start capturing errors</h2>
     </div>
-    <p class="text-[14px]" style="color: #6B6760;">Errors are captured automatically in Rails. You can also capture manually:</p>
+    <p class="text-[14px] dm-text-muted">Errors are captured automatically in Rails. You can also capture manually:</p>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code><span style="color: #9B8BF4;">begin</span>
-  <span style="color: #6B6760;"># risky code</span>
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code><span style="color: #9B8BF4;">begin</span>
+  <span class="dm-text-muted"># risky code</span>
 <span style="color: #9B8BF4;">rescue</span> => e
   <span style="color: #9B8BF4;">BrainzLab::Reflex</span>.capture(e)
   <span style="color: #9B8BF4;">raise</span>
@@ -106,10 +106,10 @@ end"
 
   <!-- With Context -->
   <div class="space-y-4">
-    <h3 class="text-[15px] font-medium" style="color: #1A1A1A;">Capture with context</h3>
-    <p class="text-[14px]" style="color: #6B6760;">Add user and custom context to your errors:</p>
+    <h3 class="text-[15px] font-medium dm-text">Capture with context</h3>
+    <p class="text-[14px] dm-text-muted">Add user and custom context to your errors:</p>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code><span style="color: #9B8BF4;">BrainzLab::Reflex</span>.capture(exception,
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code><span style="color: #9B8BF4;">BrainzLab::Reflex</span>.capture(exception,
   user: { id: current_user.id, email: current_user.email },
   tags: { feature: <span style="color: #98C379;">"checkout"</span>, version: <span style="color: #98C379;">"v2"</span> }
 )</code></pre>
@@ -126,10 +126,10 @@ end"
   </div>
 
   <!-- Error Levels -->
-  <div class="pt-6" style="border-top: 1px solid #E8E5E0;">
-    <h3 class="text-[15px] font-medium mb-4" style="color: #1A1A1A;">Capture messages without exceptions</h3>
+  <div class="pt-6" style="border-top: 1px solid var(--dm-border);">
+    <h3 class="text-[15px] font-medium mb-4 dm-text">Capture messages without exceptions</h3>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code><span style="color: #9B8BF4;">BrainzLab::Reflex</span>.capture_message(<span style="color: #98C379;">"Something unexpected happened"</span>,
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code><span style="color: #9B8BF4;">BrainzLab::Reflex</span>.capture_message(<span style="color: #98C379;">"Something unexpected happened"</span>,
   level: <span style="color: #E5C07B;">:warning</span>,
   extra: { user_id: user.id }
 )</code></pre>
@@ -144,7 +144,7 @@ end"
       </button>
     </div>
     <div class="flex flex-wrap gap-2 mt-4">
-      <code class="px-3 py-1.5 rounded-md text-[13px] font-mono" style="background: #F5F3F0; color: #6B6760; border: 1px solid #E8E5E0;">:debug</code>
+      <code class="px-3 py-1.5 rounded-md text-[13px] font-mono dm-bg-surface-light dm-text-muted dm-border">:debug</code>
       <code class="px-3 py-1.5 rounded-md text-[13px] font-mono" style="background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE;">:info</code>
       <code class="px-3 py-1.5 rounded-md text-[13px] font-mono" style="background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A;">:warning</code>
       <code class="px-3 py-1.5 rounded-md text-[13px] font-mono" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA;">:error</code>
@@ -154,10 +154,10 @@ end"
 
   <!-- Test it -->
   <div class="space-y-4">
-    <h3 class="text-[15px] font-medium" style="color: #1A1A1A;">Test your integration</h3>
-    <p class="text-[14px]" style="color: #6B6760;">Send a test error with curl:</p>
+    <h3 class="text-[15px] font-medium dm-text">Test your integration</h3>
+    <p class="text-[14px] dm-text-muted">Send a test error with curl:</p>
     <div class="group" style="position: relative;" data-controller="clipboard">
-      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto" style="background: #1A1A1A; color: #E8E5E0;"><code>curl -X POST <%= request.base_url %>/api/v1/errors \
+      <pre class="px-5 py-4 rounded-xl text-[13px] font-mono overflow-x-auto dm-code-block"><code>curl -X POST <%= request.base_url %>/api/v1/errors \
   -H "Authorization: Bearer <%= @api_key %>" \
   -H "Content-Type: application/json" \
   -d '{

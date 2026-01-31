@@ -1,7 +1,7 @@
 <div class="space-y-6">
   <!-- Back link -->
   <div>
-    <%= link_to dashboard_project_errors_path(@project), class: "inline-flex items-center gap-2 text-[13px] font-medium transition-all hover:gap-3 group", style: "color: var(--color-ink-500);" do %>
+    <%= link_to dashboard_project_errors_path(@project), class: "inline-flex items-center gap-2 text-[13px] font-medium transition-all hover:gap-3 group dm-text-muted" do %>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="transition-transform group-hover:-translate-x-0.5">
         <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -13,15 +13,15 @@
   <div class="flex justify-between items-start gap-6">
     <div class="flex-1 min-w-0">
       <div class="flex items-center gap-3 mb-3">
-        <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide rounded-full"
-              style="<%= @error.status == 'unresolved' ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark);' : @error.status == 'resolved' ? 'background: var(--color-success-bg); color: var(--color-success);' : 'background: var(--color-cream-200); color: var(--color-ink-500);' %>">
+        <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide rounded-full status-<%= @error.status %>"
+              style="<%= @error.status == 'unresolved' ? 'background: var(--color-reflex-bg); color: var(--color-reflex-dark);' : @error.status == 'resolved' ? 'background: var(--color-success-bg); color: var(--color-success);' : '' %>">
           <%= @error.status %>
         </span>
       </div>
       <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-reflex);"><%= @error.error_class %></h1>
-      <p class="text-[15px] mt-2.5 leading-relaxed" style="color: var(--color-ink-600);"><%= @error.message %></p>
+      <p class="text-[15px] mt-2.5 leading-relaxed dm-text-muted"><%= @error.message %></p>
       <% if @error.location %>
-        <p class="text-[13px] mt-3 font-mono px-3 py-1.5 rounded-lg inline-block" style="background: var(--color-cream-100); color: var(--color-ink-500);"><%= @error.location %></p>
+        <p class="text-[13px] mt-3 font-mono px-3 py-1.5 rounded-lg inline-block dm-bg-surface-light dm-text-muted"><%= @error.location %></p>
       <% end %>
     </div>
 
@@ -69,29 +69,29 @@
 
   <!-- Stats -->
   <div class="grid grid-cols-4 gap-4">
-    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Events</p>
-      <p class="text-[26px] font-bold mt-1.5 tabular-nums" style="color: var(--color-ink-900);"><%= @error.event_count %></p>
+    <div class="rounded-2xl px-5 py-4 dm-card">
+      <p class="text-[11px] font-bold uppercase tracking-wider dm-text-disabled">Events</p>
+      <p class="text-[26px] font-bold mt-1.5 tabular-nums dm-text"><%= @error.event_count %></p>
     </div>
-    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">First seen</p>
-      <p class="text-[15px] font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.first_seen_at&.strftime('%b %d, %H:%M') || '-' %></p>
+    <div class="rounded-2xl px-5 py-4 dm-card">
+      <p class="text-[11px] font-bold uppercase tracking-wider dm-text-disabled">First seen</p>
+      <p class="text-[15px] font-semibold mt-1.5 dm-text"><%= @error.first_seen_at&.strftime('%b %d, %H:%M') || '-' %></p>
     </div>
-    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Last seen</p>
-      <p class="text-[15px] font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.last_seen_at ? "#{time_ago_in_words(@error.last_seen_at)} ago" : '-' %></p>
+    <div class="rounded-2xl px-5 py-4 dm-card">
+      <p class="text-[11px] font-bold uppercase tracking-wider dm-text-disabled">Last seen</p>
+      <p class="text-[15px] font-semibold mt-1.5 dm-text"><%= @error.last_seen_at ? "#{time_ago_in_words(@error.last_seen_at)} ago" : '-' %></p>
     </div>
-    <div class="rounded-2xl px-5 py-4" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-      <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--color-ink-400);">Commit</p>
-      <p class="text-[15px] font-mono font-semibold mt-1.5" style="color: var(--color-ink-900);"><%= @error.last_commit&.slice(0, 7) || '—' %></p>
+    <div class="rounded-2xl px-5 py-4 dm-card">
+      <p class="text-[11px] font-bold uppercase tracking-wider dm-text-disabled">Commit</p>
+      <p class="text-[15px] font-mono font-semibold mt-1.5 dm-text"><%= @error.last_commit&.slice(0, 7) || '—' %></p>
     </div>
   </div>
 
   <!-- Event Viewer -->
-  <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom: 1px solid var(--color-cream-200);">
-      <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">
-        Event <span class="font-normal" style="color: var(--color-ink-400);"><%= @current_index + 1 %> of <%= @event_ids.length %></span>
+  <div class="rounded-2xl overflow-hidden dm-card">
+    <div class="px-6 py-4 flex items-center justify-between" style="border-bottom: 1px solid var(--dm-border);">
+      <h2 class="text-[14px] font-semibold dm-text">
+        Event <span class="font-normal dm-text-disabled"><%= @current_index + 1 %> of <%= @event_ids.length %></span>
       </h2>
 
       <!-- Event Navigation -->
@@ -99,14 +99,13 @@
         <!-- Prev button -->
         <% if @prev_event_id %>
           <%= link_to dashboard_project_error_path(@project, @error, event_id: @prev_event_id),
-              class: "p-1.5 rounded-lg transition-colors hover:bg-gray-100",
-              style: "color: #6B6760;" do %>
+              class: "p-1.5 rounded-lg transition-colors dm-hover dm-text-muted" do %>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           <% end %>
         <% else %>
-          <span class="p-1.5 rounded-lg" style="color: #C4C0B8;">
+          <span class="p-1.5 rounded-lg dm-text-disabled">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -116,26 +115,24 @@
         <!-- Event selector dropdown -->
         <div class="relative" data-controller="dropdown">
           <button type="button" data-action="click->dropdown#toggle"
-                  class="px-3 py-1.5 text-[13px] rounded-lg flex items-center gap-2 transition-colors hover:bg-gray-100"
-                  style="background: #F7F6F4; color: #1A1A1A;">
+                  class="px-3 py-1.5 text-[13px] rounded-lg flex items-center gap-2 transition-colors dm-hover dm-bg-surface-light dm-text">
             <span><%= @selected_event&.occurred_at&.strftime('%b %d, %H:%M:%S') %></span>
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="color: #8B8780;">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="dm-text-subtle">
               <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <div data-dropdown-target="menu" class="hidden absolute right-0 mt-1 w-64 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"
-               style="background: #FFFFFE; border: 1px solid #E8E5E0;">
+          <div data-dropdown-target="menu" class="hidden absolute right-0 mt-1 w-64 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto dm-bg-surface dm-border">
             <% @events.each_with_index do |event, idx| %>
               <%= link_to dashboard_project_error_path(@project, @error, event_id: event.id),
-                  class: "block px-3 py-2 text-[13px] transition-colors hover:bg-gray-50 #{event.id == @selected_event&.id ? 'bg-gray-50' : ''}",
-                  style: "border-bottom: 1px solid #F0EFED; color: #1A1A1A;" do %>
+                  class: "block px-3 py-2 text-[13px] transition-colors dm-hover dm-text #{event.id == @selected_event&.id ? 'dm-bg-surface-light' : ''}",
+                  style: "border-bottom: 1px solid var(--dm-border-light);" do %>
                 <div class="flex items-center justify-between">
                   <span><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
-                  <span class="text-[11px] px-1.5 py-0.5 rounded" style="background: #F0EFED; color: #6B6760;">
+                  <span class="text-[11px] px-1.5 py-0.5 rounded dm-bg-surface-light dm-text-muted">
                     <%= event.environment || 'unknown' %>
                   </span>
                 </div>
-                <div class="text-[11px] mt-0.5" style="color: #8B8780;">
+                <div class="text-[11px] mt-0.5 dm-text-subtle">
                   <%= event.user_id || 'anonymous' %> · <%= event.commit&.slice(0, 7) || 'no commit' %>
                 </div>
               <% end %>
@@ -146,14 +143,13 @@
         <!-- Next button -->
         <% if @next_event_id %>
           <%= link_to dashboard_project_error_path(@project, @error, event_id: @next_event_id),
-              class: "p-1.5 rounded-lg transition-colors hover:bg-gray-100",
-              style: "color: #6B6760;" do %>
+              class: "p-1.5 rounded-lg transition-colors dm-hover dm-text-muted" do %>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           <% end %>
         <% else %>
-          <span class="p-1.5 rounded-lg" style="color: #C4C0B8;">
+          <span class="p-1.5 rounded-lg dm-text-disabled">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -264,37 +260,37 @@
         <!-- Context -->
         <div class="mt-5 grid grid-cols-2 gap-6">
           <div>
-            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Request</h3>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3 dm-text-disabled">Request</h3>
             <dl class="space-y-2 text-[14px]">
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">Method</dt>
-                <dd style="color: #1A1A1A;"><%= @selected_event.request_method || '-' %></dd>
+                <dt class="dm-text-disabled">Method</dt>
+                <dd class="dm-text"><%= @selected_event.request_method || '-' %></dd>
               </div>
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">Path</dt>
-                <dd style="color: #1A1A1A;"><%= @selected_event.request_path || '-' %></dd>
+                <dt class="dm-text-disabled">Path</dt>
+                <dd class="dm-text"><%= @selected_event.request_path || '-' %></dd>
               </div>
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">ID</dt>
-                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @selected_event.request_id || '-' %></dd>
+                <dt class="dm-text-disabled">ID</dt>
+                <dd class="font-mono text-[13px] dm-text"><%= @selected_event.request_id || '-' %></dd>
               </div>
             </dl>
           </div>
 
           <div>
-            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Context</h3>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3 dm-text-disabled">Context</h3>
             <dl class="space-y-2 text-[14px]">
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">Environment</dt>
-                <dd style="color: #1A1A1A;"><%= @selected_event.environment || '-' %></dd>
+                <dt class="dm-text-disabled">Environment</dt>
+                <dd class="dm-text"><%= @selected_event.environment || '-' %></dd>
               </div>
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">Commit</dt>
-                <dd class="font-mono text-[13px]" style="color: #1A1A1A;"><%= @selected_event.commit&.slice(0, 7) || '-' %></dd>
+                <dt class="dm-text-disabled">Commit</dt>
+                <dd class="font-mono text-[13px] dm-text"><%= @selected_event.commit&.slice(0, 7) || '-' %></dd>
               </div>
               <div class="flex gap-2">
-                <dt style="color: #A19F9A;">User</dt>
-                <dd style="color: #1A1A1A;"><%= @selected_event.user_id || '—' %></dd>
+                <dt class="dm-text-disabled">User</dt>
+                <dd class="dm-text"><%= @selected_event.user_id || '—' %></dd>
               </div>
             </dl>
           </div>
@@ -302,47 +298,47 @@
 
         <% if @selected_event.request_params.present? %>
           <div class="mt-5">
-            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Request params</h3>
-            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@selected_event.request_params) %></pre>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3 dm-text-disabled">Request params</h3>
+            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto dm-bg-surface-light dm-text"><%= JSON.pretty_generate(@selected_event.request_params) %></pre>
           </div>
         <% end %>
 
         <% if @selected_event.context.present? %>
           <div class="mt-5">
-            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3" style="color: #A19F9A;">Custom context</h3>
-            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto" style="background: #F7F6F4;"><%= JSON.pretty_generate(@selected_event.context) %></pre>
+            <h3 class="text-[12px] font-semibold uppercase tracking-wide mb-3 dm-text-disabled">Custom context</h3>
+            <pre class="rounded-lg p-4 text-[13px] font-mono overflow-x-auto dm-bg-surface-light dm-text"><%= JSON.pretty_generate(@selected_event.context) %></pre>
           </div>
         <% end %>
       </div>
     <% else %>
-      <div class="p-5 text-[14px]" style="color: #8B8780;">No events recorded yet.</div>
+      <div class="p-5 text-[14px] dm-text-subtle">No events recorded yet.</div>
     <% end %>
   </div>
 
   <!-- Event History -->
-  <div class="rounded-2xl overflow-hidden" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-    <div class="px-6 py-4" style="border-bottom: 1px solid var(--color-cream-200);">
-      <h2 class="text-[14px] font-semibold" style="color: var(--color-ink-900);">Recent events</h2>
+  <div class="rounded-2xl overflow-hidden dm-card">
+    <div class="px-6 py-4" style="border-bottom: 1px solid var(--dm-border);">
+      <h2 class="text-[14px] font-semibold dm-text">Recent events</h2>
     </div>
 
     <% if @events.any? %>
       <% @events.each_with_index do |event, index| %>
         <% is_selected = event.id == @selected_event&.id %>
         <%= link_to dashboard_project_error_path(@project, @error, event_id: event.id),
-            class: "flex items-center gap-4 px-6 py-3.5 text-[13px] transition-all hover:bg-[var(--color-cream-50)] group",
-            style: "#{index < @events.size - 1 ? 'border-bottom: 1px solid var(--color-cream-200);' : ''} #{is_selected ? 'background: var(--color-reflex-bg-subtle);' : ''}" do %>
-          <span class="font-medium" style="color: var(--color-ink-500);"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
-          <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold" style="background: var(--color-cream-100); color: var(--color-ink-500);"><%= event.environment || 'unknown' %></span>
-          <span class="font-mono text-[12px]" style="color: var(--color-ink-400);"><%= event.commit&.slice(0, 7) %></span>
-          <span style="color: var(--color-ink-600);"><%= event.user_id || 'anonymous' %></span>
-          <span class="truncate" style="color: var(--color-ink-400);"><%= event.request_path %></span>
+            class: "flex items-center gap-4 px-6 py-3.5 text-[13px] transition-all dm-hover group #{is_selected ? 'dm-bg-surface-light' : ''}",
+            style: index < @events.size - 1 ? "border-bottom: 1px solid var(--dm-border);" : "" do %>
+          <span class="font-medium dm-text-muted"><%= event.occurred_at.strftime('%b %d, %H:%M:%S') %></span>
+          <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold dm-bg-surface-light dm-text-muted"><%= event.environment || 'unknown' %></span>
+          <span class="font-mono text-[12px] dm-text-disabled"><%= event.commit&.slice(0, 7) %></span>
+          <span class="dm-text-muted"><%= event.user_id || 'anonymous' %></span>
+          <span class="truncate dm-text-disabled"><%= event.request_path %></span>
           <% if is_selected %>
             <span class="ml-auto text-[11px] font-bold px-2 py-0.5 rounded-md" style="background: var(--color-reflex-bg); color: var(--color-reflex-dark);">viewing</span>
           <% end %>
         <% end %>
       <% end %>
     <% else %>
-      <div class="p-6 text-[14px]" style="color: var(--color-ink-500);">No events recorded yet.</div>
+      <div class="p-6 text-[14px] dm-text-muted">No events recorded yet.</div>
     <% end %>
   </div>
 </div>

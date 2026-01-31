@@ -2,8 +2,8 @@
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
-      <h1 class="text-[24px] font-semibold tracking-tight" style="color: var(--color-ink-900);">Projects</h1>
-      <p class="text-[14px] mt-1.5" style="color: var(--color-ink-500);">Select a project to view errors</p>
+      <h1 class="text-[24px] font-semibold tracking-tight dm-text">Projects</h1>
+      <p class="text-[14px] mt-1.5 dm-text-muted">Select a project to view errors</p>
     </div>
     <% unless Rails.env.production? %>
       <%= link_to new_dashboard_project_path,
@@ -25,23 +25,23 @@
         <% is_current = session[:platform_project_id] == project.platform_project_id %>
         <% project_url = is_current || Rails.env.development? ? dashboard_project_errors_path(project) : sso_url_for_project(project.platform_project_id) %>
         <%= link_to project_url,
-            class: "block rounded-2xl p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 group #{is_current ? 'ring-2 ring-offset-2' : ''}",
-            style: "background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);#{is_current ? ' --tw-ring-color: var(--color-reflex);' : ''}" do %>
+            class: "block rounded-2xl p-6 transition-all hover:shadow-lg hover:-translate-y-0.5 group dm-card #{is_current ? 'ring-2 ring-offset-2' : ''}",
+            style: is_current ? '--tw-ring-color: var(--color-reflex);' : '' do %>
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--color-cream-200) 100%);">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, var(--color-reflex-bg) 0%, var(--dm-surface-light) 100%);">
                 <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
                   <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="var(--color-reflex)"/>
                 </svg>
               </div>
               <div>
                 <div class="flex items-center gap-2">
-                  <h3 class="text-[16px] font-semibold" style="color: var(--color-ink-900);"><%= project.name %></h3>
+                  <h3 class="text-[16px] font-semibold dm-text"><%= project.name %></h3>
                   <% if is_current %>
                     <span class="px-2 py-0.5 text-[11px] font-semibold rounded-full" style="background: var(--color-reflex-bg); color: var(--color-reflex);">Current</span>
                   <% end %>
                 </div>
-                <p class="text-[13px] mt-0.5 font-medium" style="color: var(--color-ink-500);">
+                <p class="text-[13px] mt-0.5 font-medium dm-text-muted">
                   <%= project.environment || 'development' %>
                 </p>
               </div>
@@ -67,17 +67,17 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-4 mt-5 text-[13px] font-medium" style="color: var(--color-ink-400);">
+          <div class="flex items-center gap-4 mt-5 text-[13px] font-medium dm-text-disabled">
             <span class="flex items-center gap-1.5">
               <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
               <%= @error_group_counts[project.id] || 0 %> errors
             </span>
-            <span style="color: var(--color-cream-300);">|</span>
+            <span class="dm-text-disabled">|</span>
             <span><%= @error_event_counts[project.id] || 0 %> events</span>
             <% if @last_event_times[project.id] %>
-              <span style="color: var(--color-cream-300);">|</span>
+              <span class="dm-text-disabled">|</span>
               <span>Last event <%= time_ago_in_words(@last_event_times[project.id]) %> ago</span>
             <% end %>
           </div>
@@ -85,22 +85,22 @@
       <% end %>
     </div>
   <% else %>
-    <div class="rounded-2xl px-8 py-20 text-center" style="background: white; border: 1px solid var(--color-cream-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-sm" style="background: linear-gradient(135deg, var(--color-cream-100) 0%, var(--color-cream-200) 100%);">
+    <div class="rounded-2xl px-8 py-20 text-center dm-card">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 shadow-sm" style="background: linear-gradient(135deg, var(--dm-surface-light) 0%, var(--dm-surface-hover) 100%);">
         <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
-          <path d="M10 2L18 10L10 18L2 10L10 2Z" fill="var(--color-ink-300)"/>
+          <path d="M10 2L18 10L10 18L2 10L10 2Z" class="dm-text-disabled" fill="currentColor"/>
         </svg>
       </div>
-      <p class="text-[17px] font-semibold" style="color: var(--color-ink-900);">No projects yet</p>
+      <p class="text-[17px] font-semibold dm-text">No projects yet</p>
       <% if Rails.env.production? %>
-        <p class="text-[14px] mt-2 max-w-sm mx-auto" style="color: var(--color-ink-500);">Create a project in Platform to get started</p>
+        <p class="text-[14px] mt-2 max-w-sm mx-auto dm-text-muted">Create a project in Platform to get started</p>
         <%= link_to ENV.fetch('BRAINZLAB_PLATFORM_EXTERNAL_URL', 'https://platform.brainzlab.ai'), target: "_blank",
             class: "inline-flex items-center gap-2 mt-6 px-5 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
             style: "background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%); color: white;" do %>
           Go to Platform
         <% end %>
       <% else %>
-        <p class="text-[14px] mt-2 max-w-sm mx-auto" style="color: var(--color-ink-500);">Create your first project to start tracking errors and getting insights</p>
+        <p class="text-[14px] mt-2 max-w-sm mx-auto dm-text-muted">Create your first project to start tracking errors and getting insights</p>
         <%= link_to new_dashboard_project_path,
             class: "inline-flex items-center gap-2 mt-6 px-5 py-2.5 text-[13px] font-semibold rounded-xl transition-all hover:shadow-md",
             style: "background: linear-gradient(135deg, var(--color-reflex) 0%, var(--color-reflex-dark) 100%); color: white;" do %>

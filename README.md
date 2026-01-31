@@ -10,17 +10,20 @@ Error tracking with instant reaction for Rails apps.
 [![Docs](https://img.shields.io/badge/docs-brainzlab.ai-orange)](https://docs.brainzlab.ai/products/reflex/overview)
 [![License: OSAaSy](https://img.shields.io/badge/License-OSAaSy-blue.svg)](LICENSE)
 
-## Overview
-
-Reflex captures and groups errors from your Rails applications, giving you instant visibility into production issues.
-
-- **Smart Grouping** - Errors grouped by fingerprint, not just class
-- **Rich Context** - Full backtrace, request data, user info
-- **Real-time Alerts** - Instant notifications via Slack, email, webhooks
-- **Issue Tracking** - Resolve, ignore, mute with regression detection
-- **MCP Integration** - AI-powered error analysis and resolution
-
 ## Quick Start
+
+```bash
+# Install SDK
+gem 'brainzlab'
+
+# Configure
+BrainzLab.configure { |c| c.reflex_key = ENV['REFLEX_API_KEY'] }
+
+# Capture errors (automatic with middleware)
+BrainzLab::Reflex.capture(exception, user: current_user)
+```
+
+## Installation
 
 ### With Docker
 
@@ -51,6 +54,37 @@ BrainzLab.configure do |config|
 end
 ```
 
+### Local Development
+
+```bash
+git clone https://github.com/brainz-lab/reflex.git
+cd reflex
+bundle install
+bin/rails db:create db:migrate db:seed
+bin/rails server
+```
+
+## Configuration
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection | Yes |
+| `REDIS_URL` | Redis connection | Yes |
+| `RAILS_MASTER_KEY` | Rails credentials | Yes |
+| `BRAINZLAB_PLATFORM_URL` | Platform URL for auth | Yes |
+| `SERVICE_KEY` | Internal service key | Yes |
+| `SLACK_WEBHOOK_URL` | Slack notifications | No |
+
+### Tech Stack
+
+- **Ruby** 3.4.7 / **Rails** 8.1
+- **PostgreSQL** 16 with JSONB
+- **Redis** 7
+- **Hotwire** (Turbo + Stimulus) / **Tailwind CSS**
+- **Solid Queue** / **Solid Cache** / **Solid Cable**
+
+## Usage
+
 ### Capture Errors
 
 ```ruby
@@ -69,17 +103,7 @@ BrainzLab::Reflex.set_context(user: current_user)
 BrainzLab::Reflex.set_tags(environment: "production", region: "us-east-1")
 ```
 
-## Tech Stack
-
-- **Ruby** 3.4.7
-- **Rails** 8.1
-- **PostgreSQL** 16 with JSONB
-- **Redis** 7
-- **Hotwire** (Turbo + Stimulus)
-- **Tailwind CSS**
-- **Solid Queue** / **Solid Cache** / **Solid Cable**
-
-## Error Grouping
+### Error Grouping
 
 Errors are grouped by fingerprint generated from:
 
@@ -88,9 +112,7 @@ Errors are grouped by fingerprint generated from:
 3. **Function name** - Method where error occurred
 4. **Normalized message** - IDs and numbers replaced with placeholders
 
-This means similar errors are grouped together, even if the specific IDs differ.
-
-## Error States
+### Error States
 
 | Status | Description |
 |--------|-------------|
@@ -99,51 +121,7 @@ This means similar errors are grouped together, even if the specific IDs differ.
 | `ignored` | Won't trigger alerts |
 | `muted` | Temporarily silenced |
 
-## API Endpoints
-
-### Ingest
-- `POST /api/v1/errors` - Report single error
-- `POST /api/v1/errors/batch` - Batch report
-
-### Query
-- `GET /api/v1/errors` - List error groups
-- `GET /api/v1/errors/:id` - Get error details with events
-
-### Actions
-- `POST /api/v1/errors/:id/resolve` - Mark resolved
-- `POST /api/v1/errors/:id/ignore` - Ignore error
-- `POST /api/v1/errors/:id/unresolve` - Reopen error
-- `POST /api/v1/errors/:id/mute` - Mute temporarily
-
-### MCP
-- `GET /mcp/tools` - List MCP tools
-- `POST /mcp/tools/:name` - Call MCP tool
-- `POST /mcp/rpc` - JSON-RPC endpoint
-
-## MCP Tools
-
-| Tool | Description |
-|------|-------------|
-| `reflex_list` | List errors (filter by status, sort) |
-| `reflex_show` | Get error details + backtrace |
-| `reflex_resolve` | Mark error as resolved |
-| `reflex_ignore` | Ignore an error |
-| `reflex_unresolve` | Reopen a resolved error |
-| `reflex_stats` | Error statistics and trends |
-| `reflex_search` | Search by class, user, commit |
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection | Yes |
-| `REDIS_URL` | Redis connection | Yes |
-| `RAILS_MASTER_KEY` | Rails credentials | Yes |
-| `BRAINZLAB_PLATFORM_URL` | Platform URL for auth | Yes |
-| `SERVICE_KEY` | Internal service key | Yes |
-| `SLACK_WEBHOOK_URL` | Slack notifications | No |
-
-## Error Payload Format
+### Error Payload Format
 
 ```json
 {
@@ -175,7 +153,57 @@ This means similar errors are grouped together, even if the specific IDs differ.
 }
 ```
 
-## Testing
+## API Reference
+
+### Ingest
+- `POST /api/v1/errors` - Report single error
+- `POST /api/v1/errors/batch` - Batch report
+
+### Query
+- `GET /api/v1/errors` - List error groups
+- `GET /api/v1/errors/:id` - Get error details with events
+
+### Actions
+- `POST /api/v1/errors/:id/resolve` - Mark resolved
+- `POST /api/v1/errors/:id/ignore` - Ignore error
+- `POST /api/v1/errors/:id/unresolve` - Reopen error
+- `POST /api/v1/errors/:id/mute` - Mute temporarily
+
+### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `reflex_list` | List errors (filter by status, sort) |
+| `reflex_show` | Get error details + backtrace |
+| `reflex_resolve` | Mark error as resolved |
+| `reflex_ignore` | Ignore an error |
+| `reflex_unresolve` | Reopen a resolved error |
+| `reflex_stats` | Error statistics and trends |
+| `reflex_search` | Search by class, user, commit |
+
+Full documentation: [docs.brainzlab.ai/products/reflex](https://docs.brainzlab.ai/products/reflex/overview)
+
+## Self-Hosting
+
+### Docker Compose
+
+```yaml
+services:
+  reflex:
+    image: brainzllc/reflex:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://user:pass@db:5432/reflex
+      REDIS_URL: redis://redis:6379/2
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      BRAINZLAB_PLATFORM_URL: http://platform:3000
+    depends_on:
+      - db
+      - redis
+```
+
+### Testing
 
 ```bash
 bin/rails test              # Unit tests
@@ -183,9 +211,9 @@ bin/rails test:system       # System tests
 bin/rubocop                 # Linting
 ```
 
-## Documentation
+## Contributing
 
-Full documentation: [docs.brainzlab.ai/products/reflex](https://docs.brainzlab.ai/products/reflex/overview)
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for development setup and contribution guidelines.
 
 ## Related
 
@@ -193,18 +221,6 @@ Full documentation: [docs.brainzlab.ai/products/reflex](https://docs.brainzlab.a
 - [Recall](https://github.com/brainz-lab/recall) - Structured logging
 - [Pulse](https://github.com/brainz-lab/pulse) - APM
 - [Stack](https://github.com/brainz-lab/stack) - Self-hosted deployment
-
-## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-Thanks to all our contributors! See [all-contributors](https://allcontributors.org) for how to add yourself.
-
 
 ## License
 
