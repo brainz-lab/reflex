@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="h-full" data-controller="dark-mode">
 <head>
   <title>Reflex - <%= content_for(:title) || "Error Tracking" %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -16,13 +16,14 @@
   <%= stylesheet_link_tag "dark_mode", "data-turbo-track": "reload" %>
   <%= javascript_importmap_tags %>
 
-  <%# Prevent flash of unstyled content by setting theme before render %>
+  <%# Prevent flash of wrong theme on page load %>
   <script>
     (function() {
-      const saved = localStorage.getItem('reflex-dark-mode');
-      if (saved === 'dark') {
+      const savedTheme = localStorage.getItem('brainzlab-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
         document.documentElement.classList.add('dark');
-      } else if (saved === 'light') {
+      } else {
         document.documentElement.classList.add('light');
       }
     })();
@@ -48,7 +49,7 @@
     </script>
   <% end %>
 </head>
-<body class="h-full antialiased dm-bg" data-controller="dark-mode">
+<body class="h-full antialiased dm-bg">
   <div class="flex h-full">
     <!-- Sidebar -->
     <aside class="w-64 flex flex-col dm-sidebar">
