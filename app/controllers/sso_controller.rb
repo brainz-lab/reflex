@@ -22,6 +22,9 @@ class SsoController < ApplicationController
       # Sync all user's projects from Platform
       sync_projects_from_platform(token)
 
+      # Ensure at least the current project exists (fallback if full sync failed)
+      ensure_project_exists(user_info)
+
       redirect_to params[:return_to] || dashboard_root_path
     else
       redirect_to "#{platform_external_url}/login?error=sso_failed", allow_other_host: true
@@ -74,6 +77,21 @@ class SsoController < ApplicationController
     Rails.logger.info("[SSO] Synced #{projects_data.count} projects from Platform")
   rescue => e
     Rails.logger.error("[SSO] Project sync failed: #{e.message}")
+  end
+
+  # Fallback: ensure at least the current project exists from SSO validation data
+  def ensure_project_exists(user_info)
+    return unless user_info[:project_id].present?
+
+    project = Project.find_or_initialize_by(platform_project_id: user_info[:project_id].to_s)
+    return if project.persisted? # Already exists
+
+    project.name = user_info[:project_slug] || "Project #{user_info[:project_id]}"
+    project.environment = "live"
+    project.save!
+    Rails.logger.info("[SSO] Created project from SSO validation: #{project.name}")
+  rescue => e
+    Rails.logger.error("[SSO] ensure_project_exists failed: #{e.message}")
   end
 
   def fetch_user_projects(sso_token)

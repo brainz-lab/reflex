@@ -40,6 +40,7 @@ env:
     VAULT_URL: https://vault.brainzlab.ai
     VAULT_AUTO_LOAD: "true"
     BRAINZLAB_PLATFORM_URL: https://platform.brainzlab.ai
+    BRAINZLAB_PLATFORM_EXTERNAL_URL: https://platform.brainzlab.ai
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
