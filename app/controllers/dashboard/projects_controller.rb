@@ -1,7 +1,7 @@
 module Dashboard
   class ProjectsController < BaseController
     skip_before_action :set_project, only: [ :index, :new, :create ]
-    before_action :set_project, only: [ :show, :setup, :mcp_setup, :analytics, :edit, :update ]
+    before_action :set_project, only: [ :show, :setup, :mcp_setup, :regenerate_mcp_token, :analytics, :edit, :update ]
     before_action :redirect_to_platform_in_production, only: [ :new, :create ]
 
     def index
@@ -84,11 +84,21 @@ module Dashboard
 
       if @api_key.blank?
         @project.settings ||= {}
-        @project.settings["api_key"] = "rfx_api_#{SecureRandom.hex(24)}"
+        new_key = "rfx_api_#{SecureRandom.hex(24)}"
+        @project.settings["api_key"] = new_key
         @project.settings["ingest_key"] ||= "rfx_ingest_#{SecureRandom.hex(24)}"
         @project.save!
-        @api_key = @project.settings["api_key"]
+        @api_key = new_key
+        @raw_api_key = new_key
       end
+    end
+
+    def regenerate_mcp_token
+      @project.settings ||= {}
+      new_key = "rfx_api_#{SecureRandom.hex(24)}"
+      @project.settings["api_key"] = new_key
+      @project.save!
+      redirect_to mcp_setup_dashboard_project_path(@project), notice: "API key regenerated"
     end
 
     def edit

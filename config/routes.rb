@@ -48,6 +48,7 @@ Rails.application.routes.draw do
       member do
         get :setup
         get :mcp_setup
+        post :regenerate_mcp_token
         get :analytics
         get :settings, to: "projects#edit"
       end
