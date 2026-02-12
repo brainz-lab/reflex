@@ -27,15 +27,41 @@ worker: &worker
 
 
 development:
-  <<: *default
-  url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_development") %>
+  primary:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_development") %>
+  queue:
+    <<: *worker
+    url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_development") %>
+    migrations_paths: db/queue_migrate
+  cache:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_development") %>
+    migrations_paths: db/cache_migrate
+  cable:
+    <<: *default
+    url: <%= ENV.fetch("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_development") %>
+    migrations_paths: db/cable_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@db:5432/reflex_test") %>
+  primary:
+    <<: *default
+    url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_test") %>
+  queue:
+    <<: *worker
+    url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_test") %>
+    migrations_paths: db/queue_migrate
+  cache:
+    <<: *default
+    url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_test") %>
+    migrations_paths: db/cache_migrate
+  cable:
+    <<: *default
+    url: <%= ENV.fetch("TEST_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/reflex_test") %>
+    migrations_paths: db/cable_migrate
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
