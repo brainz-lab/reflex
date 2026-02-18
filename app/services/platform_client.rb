@@ -6,7 +6,7 @@ require "json"
 # Client for validating API keys against Platform
 # Enables unified authentication across all BrainzLab products
 class PlatformClient
-  PLATFORM_URL = ENV.fetch("PLATFORM_URL", "https://platform.brainzlab.ai")
+  PLATFORM_URL = ENV.fetch("BRAINZLAB_PLATFORM_URL", "https://platform.brainzlab.ai")
   TIMEOUT = 5
 
   # Cache durations
