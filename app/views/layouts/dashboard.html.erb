@@ -52,12 +52,15 @@
   </script>
 
   <style>
-    :root {
-      /* Reflex-specific brand colors */
-      --color-reflex: #D97706;
-      --color-reflex-dark: #B45309;
-      --color-reflex-light: #F59E0B;
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
   </style>
 
   <%# Google Analytics - only in production %>
@@ -71,62 +74,43 @@
     </script>
   <% end %>
 </head>
-<body class="h-full antialiased dm-bg">
+<body class="h-full dm-body-gradient">
   <div class="flex h-full">
     <!-- Sidebar -->
-    <aside class="w-64 flex flex-col dm-sidebar">
-      <div class="p-5 flex items-center justify-between" style="border-bottom: 1px solid var(--dm-border);">
-        <%= link_to dashboard_root_path, class: "flex items-center gap-2.5" do %>
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--color-reflex);">
-            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 3L4 14h7v7l9-11h-7V3z"/>
-            </svg>
-          </div>
-          <span class="font-semibold dm-text">Reflex</span>
-        <% end %>
+    <aside class="w-64 flex flex-col dm-sidebar-enhanced relative overflow-hidden flex-shrink-0">
+      <!-- Decorative gradient blobs -->
+      <div class="dm-gradient-mesh">
+        <div class="dm-gradient-blob dm-gradient-blob-primary" style="width: 200px; height: 200px; top: -60px; right: -60px;"></div>
+        <div class="dm-gradient-blob dm-gradient-blob-secondary" style="width: 150px; height: 150px; bottom: 20%; left: -40px;"></div>
+      </div>
 
-        <%# Dark Mode Toggle %>
-        <button type="button"
-                class="dark-mode-toggle"
-                onclick="toggleDarkMode()"
-                data-dark-mode-target="icon"
-                aria-label="Toggle dark mode"
-                title="Toggle dark mode">
-          <%# Moon icon (shown in light mode) %>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-          <%# Sun icon (shown in dark mode) %>
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-        </button>
+      <!-- Logo -->
+      <div class="p-5 border-b dm-border-secondary relative z-10">
+        <%= link_to dashboard_root_path, class: "flex flex-col items-end gap-1 group" do %>
+          <div class="flex items-center">
+            <img src="/fluyenta-logo-light.png" alt="Fluyenta" class="h-12 dark:hidden">
+            <img src="/fluyenta-logo-dark.png" alt="Fluyenta" class="h-12 hidden dark:block">
+          </div>
+          <span class="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded" style="color: var(--dm-brand); background: color-mix(in srgb, var(--dm-brand) 12%, transparent);">Reflex</span>
+        <% end %>
       </div>
 
       <% if @project&.persisted? %>
         <!-- Project Selector -->
-        <div class="px-4 py-3" style="border-bottom: 1px solid var(--dm-border);">
-          <%= link_to dashboard_projects_path, class: "flex items-center gap-2 px-2 py-1.5 rounded-lg transition dm-hover", style: "color: var(--dm-text-muted);" do %>
+        <div class="px-4 py-3 border-b dm-border-secondary relative z-10">
+          <%= link_to dashboard_projects_path, class: "flex items-center gap-2 px-2 py-1.5 rounded-lg transition dm-hover dm-text-muted" do %>
             <div class="w-6 h-6 rounded flex items-center justify-center text-xs font-semibold" style="background: rgba(217, 119, 6, 0.15); color: var(--color-reflex);">
               <%= @project.name.first.upcase %>
             </div>
             <span class="flex-1 text-sm font-medium truncate dm-text"><%= @project.name %></span>
-            <svg class="w-4 h-4 dm-text-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 dm-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
             </svg>
           <% end %>
         </div>
 
         <!-- Navigation -->
-        <nav class="p-4 space-y-1 flex-1">
+        <nav class="p-4 space-y-1 flex-1 relative z-10">
           <%= link_to dashboard_project_errors_path(@project), class: nav_link_class('/errors') do %>
             <%= icon(:errors) %>
             Errors
@@ -154,7 +138,7 @@
         </nav>
 
         <% if Rails.env.development? %>
-          <div class="px-4 pb-3">
+          <div class="px-4 pb-3 relative z-10">
             <%= link_to dashboard_dev_tools_path, class: "nav-item" do %>
               <%= icon(:dev_tools) %>
               Dev Tools
@@ -162,8 +146,8 @@
           </div>
         <% end %>
       <% else %>
-        <nav class="p-4 flex-1">
-          <p class="px-3 text-xs font-medium uppercase tracking-wider mb-3 dm-text-disabled">Select a project</p>
+        <nav class="p-4 flex-1 relative z-10">
+          <p class="px-3 text-xs font-medium uppercase tracking-wider mb-3 dm-text-muted">Select a project</p>
           <% if Rails.env.development? %>
             <%= link_to dashboard_dev_tools_path, class: "nav-item mt-4" do %>
               <%= icon(:dev_tools) %>
@@ -175,40 +159,56 @@
 
       <!-- User Menu -->
       <% if defined?(current_user) && current_user %>
-        <div class="p-4" style="border-top: 1px solid var(--dm-border);">
-          <div class="flex items-center gap-3">
-            <div class="avatar avatar-md avatar-primary">
+        <div class="p-3 border-t dm-border-secondary relative z-10">
+          <div class="flex items-center gap-3 px-2 py-2 rounded-xl dm-surface-hover transition">
+            <div class="dm-member-avatar w-8 h-8 text-[12px]">
               <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium truncate dm-text"><%= current_user.name || current_user.email.split('@').first %></p>
-              <p class="text-xs truncate dm-text-muted"><%= current_user.email %></p>
+              <p class="text-[13px] font-medium truncate dm-text"><%= current_user.name || current_user.email.split('@').first %></p>
+              <p class="text-[11px] truncate dm-text-muted"><%= current_user.email %></p>
             </div>
+
+            <!-- Dark Mode Toggle -->
+            <button onclick="toggleDarkMode()"
+                    class="p-1.5 rounded-lg transition-all dm-text-muted hover:dm-text hover:bg-transparent"
+                    data-dark-mode-target="icon"
+                    title="Toggle dark mode">
+              <svg data-dark-mode-target="sunIcon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              <svg data-dark-mode-target="moonIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </button>
           </div>
         </div>
       <% end %>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-auto dm-bg">
+    <main class="flex-1 overflow-auto relative">
+      <!-- Decorative gradient blobs -->
+      <div class="dm-gradient-mesh">
+        <div class="dm-gradient-blob dm-gradient-blob-primary" style="width: 500px; height: 500px; top: -150px; right: 5%;"></div>
+        <div class="dm-gradient-blob dm-gradient-blob-secondary" style="width: 400px; height: 400px; bottom: 10%; left: -100px;"></div>
+        <div class="dm-gradient-blob dm-gradient-blob-cyan" style="width: 300px; height: 300px; top: 40%; right: -80px;"></div>
+      </div>
+
       <% if notice %>
-        <div class="m-8 mb-0 alert alert-success">
-          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span><%= notice %></span>
+        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-[13px] font-medium flex items-center gap-3 dm-success border dm-fade-in-up relative z-10">
+          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <%= notice %>
         </div>
       <% end %>
-      <% if alert %>
-        <div class="m-8 mb-0 alert alert-error">
-          <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
-          <span><%= alert %></span>
+      <% if alert || flash[:error] %>
+        <div class="m-8 mb-0 px-4 py-3 rounded-xl text-[13px] font-medium flex items-center gap-3 dm-error border dm-fade-in-up relative z-10">
+          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+          <%= alert || flash[:error] %>
         </div>
       <% end %>
 
-      <div class="p-8">
+      <div class="p-8 relative z-10">
         <%= yield %>
       </div>
     </main>
