@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: registry.digitalocean.com
-  IMAGE_NAME: runmyprocess/reflex
+  IMAGE_NAME: ${{ secrets.DO_REGISTRY }}/reflex
 
 jobs:
   deploy:
