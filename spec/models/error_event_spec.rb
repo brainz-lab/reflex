@@ -165,7 +165,7 @@ RSpec.describe ErrorEvent, type: :model do
         context: { custom_field: "value" },
         tags: { environment: "production" },
         extra: { server: "web-1" },
-        breadcrumbs: [{ action: "user.login", timestamp: Time.current.iso8601 }]
+        breadcrumbs: [ { action: "user.login", timestamp: Time.current.iso8601 } ]
       )
 
       expect(event.context["custom_field"]).to eq("value")

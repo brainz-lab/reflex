@@ -90,7 +90,7 @@ RSpec.describe ErrorProcessor, type: :service do
         project = create(:project)
         payload = {
           exception: { class: "CustomError", message: "Something went wrong" },
-          backtrace: ["app/models/user.rb:42:in `method'"]
+          backtrace: [ "app/models/user.rb:42:in `method'" ]
         }
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -103,7 +103,7 @@ RSpec.describe ErrorProcessor, type: :service do
         project = create(:project)
         payload = {
           message: "Something went wrong",
-          backtrace: ["app/models/user.rb:42:in `method'"]
+          backtrace: [ "app/models/user.rb:42:in `method'" ]
         }
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -233,7 +233,7 @@ RSpec.describe ErrorProcessor, type: :service do
       it "extracts file path from backtrace" do
         project = create(:project)
         payload = sample_error_payload(
-          backtrace: ["app/models/user.rb:42:in `full_name'"]
+          backtrace: [ "app/models/user.rb:42:in `full_name'" ]
         )
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -245,7 +245,7 @@ RSpec.describe ErrorProcessor, type: :service do
       it "extracts line number from backtrace" do
         project = create(:project)
         payload = sample_error_payload(
-          backtrace: ["app/models/user.rb:42:in `full_name'"]
+          backtrace: [ "app/models/user.rb:42:in `full_name'" ]
         )
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -257,7 +257,7 @@ RSpec.describe ErrorProcessor, type: :service do
       it "extracts function name from backtrace" do
         project = create(:project)
         payload = sample_error_payload(
-          backtrace: ["app/models/user.rb:42:in `full_name'"]
+          backtrace: [ "app/models/user.rb:42:in `full_name'" ]
         )
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -335,7 +335,7 @@ RSpec.describe ErrorProcessor, type: :service do
           context: { custom: "value" },
           tags: { team: "backend" },
           extra: { debug_info: "test" },
-          breadcrumbs: [{ action: "user.login" }]
+          breadcrumbs: [ { action: "user.login" } ]
         )
 
         processor = ErrorProcessor.new(project: project, payload: payload)
@@ -364,7 +364,7 @@ RSpec.describe ErrorProcessor, type: :service do
       payload = {
         "error_class" => "NoMethodError",
         "message" => "Test",
-        "backtrace" => ["app/models/user.rb:42:in `method'"],
+        "backtrace" => [ "app/models/user.rb:42:in `method'" ],
         "request" => {
           "method" => "POST",
           "params" => { "name" => "John" }

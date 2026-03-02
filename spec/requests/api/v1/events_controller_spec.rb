@@ -85,7 +85,7 @@ RSpec.describe "Api::V1::EventsController", type: :request do
         exception: {
           class: "CustomError",
           message: "Something went wrong",
-          backtrace: ["app/models/user.rb:42:in `method'"]
+          backtrace: [ "app/models/user.rb:42:in `method'" ]
         }
       }
 

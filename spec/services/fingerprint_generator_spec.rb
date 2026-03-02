@@ -8,7 +8,7 @@ RSpec.describe FingerprintGenerator, type: :service do
       payload1 = {
         error_class: "NoMethodError",
         message: "undefined method 'foo' for nil:NilClass",
-        backtrace: ["app/models/user.rb:42:in `full_name'"]
+        backtrace: [ "app/models/user.rb:42:in `full_name'" ]
       }
       payload2 = payload1.dup
 
@@ -23,15 +23,15 @@ RSpec.describe FingerprintGenerator, type: :service do
     end
 
     it "generates different fingerprint for different file" do
-      payload1 = sample_error_payload(backtrace: ["app/models/user.rb:42:in `full_name'"])
-      payload2 = sample_error_payload(backtrace: ["app/models/post.rb:42:in `full_name'"])
+      payload1 = sample_error_payload(backtrace: [ "app/models/user.rb:42:in `full_name'" ])
+      payload2 = sample_error_payload(backtrace: [ "app/models/post.rb:42:in `full_name'" ])
 
       expect(described_class.generate(payload1)).not_to eq(described_class.generate(payload2))
     end
 
     it "generates different fingerprint for different function" do
-      payload1 = sample_error_payload(backtrace: ["app/models/user.rb:42:in `full_name'"])
-      payload2 = sample_error_payload(backtrace: ["app/models/user.rb:42:in `email'"])
+      payload1 = sample_error_payload(backtrace: [ "app/models/user.rb:42:in `full_name'" ])
+      payload2 = sample_error_payload(backtrace: [ "app/models/user.rb:42:in `email'" ])
 
       expect(described_class.generate(payload1)).not_to eq(described_class.generate(payload2))
     end
@@ -68,7 +68,7 @@ RSpec.describe FingerprintGenerator, type: :service do
     it "handles missing message gracefully" do
       payload = {
         error_class: "NoMethodError",
-        backtrace: ["app/models/user.rb:42:in `full_name'"]
+        backtrace: [ "app/models/user.rb:42:in `full_name'" ]
       }
       expect { described_class.generate(payload) }.not_to raise_error
     end
@@ -116,13 +116,13 @@ RSpec.describe FingerprintGenerator, type: :service do
 
   describe ".extract_file" do
     it "handles string backtrace format" do
-      payload = sample_error_payload(backtrace: ["app/models/user.rb:42:in `full_name'"])
+      payload = sample_error_payload(backtrace: [ "app/models/user.rb:42:in `full_name'" ])
       expect(described_class.extract_file(payload)).to eq("app/models/user.rb")
     end
 
     it "handles hash backtrace format" do
       payload = sample_error_payload(
-        backtrace: [{ "file" => "app/models/user.rb", "line" => 42 }]
+        backtrace: [ { "file" => "app/models/user.rb", "line" => 42 } ]
       )
       expect(described_class.extract_file(payload)).to eq("app/models/user.rb")
     end
@@ -131,7 +131,7 @@ RSpec.describe FingerprintGenerator, type: :service do
       payload = {
         exception: {
           class: "NoMethodError",
-          backtrace: ["app/models/user.rb:42:in `full_name'"]
+          backtrace: [ "app/models/user.rb:42:in `full_name'" ]
         }
       }
       expect(described_class.extract_file(payload)).to eq("app/models/user.rb")
@@ -140,13 +140,13 @@ RSpec.describe FingerprintGenerator, type: :service do
 
   describe ".extract_function" do
     it "handles string backtrace format" do
-      payload = sample_error_payload(backtrace: ["app/models/user.rb:42:in `full_name'"])
+      payload = sample_error_payload(backtrace: [ "app/models/user.rb:42:in `full_name'" ])
       expect(described_class.extract_function(payload)).to eq("full_name")
     end
 
     it "handles hash backtrace format" do
       payload = sample_error_payload(
-        backtrace: [{ "file" => "app/models/user.rb", "function" => "full_name" }]
+        backtrace: [ { "file" => "app/models/user.rb", "function" => "full_name" } ]
       )
       expect(described_class.extract_function(payload)).to eq("full_name")
     end
