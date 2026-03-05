@@ -10,6 +10,8 @@ gem "pg", "~> 1.1"
 gem "timescaledb-rails"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
+# Anthropic Claude API client
+gem "anthropic", "~> 0.4"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
