@@ -2,3 +2,4 @@
 :concurrency: 3
 :queues:
   - default
+  - platform_client

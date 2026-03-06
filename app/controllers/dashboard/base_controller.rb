@@ -4,6 +4,7 @@ module Dashboard
 
     before_action :authenticate_via_sso!
     before_action :set_project
+    before_action :set_transaction_organization
 
     helper_method :current_project
 
@@ -54,6 +55,15 @@ module Dashboard
 
     def platform_url
       ENV["BRAINZLAB_PLATFORM_EXTERNAL_URL"] || ENV["BRAINZLAB_PLATFORM_URL"] || "https://platform.brainzlab.ai"
+    end
+
+    def set_transaction_organization
+      return unless defined?(BrainzLab::PlatformClient::CurrentTransaction)
+
+      tx = BrainzLab::PlatformClient::CurrentTransaction.get
+      return unless tx
+
+      tx[:organization_id] = session[:platform_organization_id]
     end
 
     # Build SSO URL with optional project_id
