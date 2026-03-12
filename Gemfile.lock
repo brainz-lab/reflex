@@ -1,7 +1,7 @@
 PATH
   remote: ../brainzlab-platform-client
   specs:
-    brainzlab-platform-client (0.1.1)
+    brainzlab-platform-client (0.1.2)
       rails (>= 7.0)
 
 PATH
@@ -121,10 +121,6 @@ GEM
     bindex (0.8.1)
     bootsnap (1.23.0)
       msgpack (~> 1.2)
-    brainzlab (0.1.12)
-      concurrent-ruby (~> 1.0)
-      logger (~> 1.5)
-      sqlite3 (~> 2.0)
     brakeman (8.0.4)
       racc
     builder (3.3.0)
@@ -171,6 +167,10 @@ GEM
     ffi (1.17.3-arm64-darwin)
     ffi (1.17.3-x86_64-linux-gnu)
     ffi (1.17.3-x86_64-linux-musl)
+    fluyenta-ruby (0.1.15)
+      concurrent-ruby (~> 1.0)
+      logger (~> 1.5)
+      sqlite3 (~> 2.0)
     fugit (1.12.1)
       et-orbi (~> 1.4)
       raabro (~> 1.4)
@@ -511,12 +511,12 @@ DEPENDENCIES
   anthropic (~> 0.4)
   aws-sdk-s3
   bootsnap
-  brainzlab (~> 0.1.12)
   brainzlab-platform-client!
   brakeman
   bundler-audit
   debug
   factory_bot_rails (~> 6.4)
+  fluyenta-ruby (~> 0.1.15)
   fluyenta-ui!
   image_processing (~> 1.2)
   importmap-rails
