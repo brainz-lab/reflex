@@ -114,7 +114,7 @@ module Mcp
 
     def tool_arguments
       # Allow any params except controller/action/name
-      params.except(:controller, :action, :name, :format).permit!.to_h
+      params.except(:controller, :action, :name, :format).then { |p| p.permit(*p.keys).to_h }
     end
   end
 end
